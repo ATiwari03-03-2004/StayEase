@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StayEase</title>
+  </head>
+  <body>
+    <h3>Create a New Listing</h3>
+    <form action="http://localhost:8080/listings/new" method="post">
+      <input type="text" name="listing[title]" id="title" placeholder="Enter title" />
+      <br />
+      <br />
+      <textarea
+        name="listing[description]"
+        id="description"
+        placeholder="Enter description"
+      ></textarea>
+      <br />
+      <br />
+      <input
+        type="text"
+        name="listing[image]"
+        id="image"
+        placeholder="Enter image URL"
+      />
+      <br />
+      <br />
+      <input type="number" name="listing[price]" id="price" placeholder="Enter price" />
+      <br />
+      <br />
+      <input type="text" name="listing[location]" id="location" placeholder="Enter location" />
+      <br />
+      <br />
+      <input type="text" name="listing[country]" id="country" placeholder="Enter country" />
+      <br />
+      <br />
+      <button type="submit">Add</button>
+    </form>
+  </body>
+</html>
