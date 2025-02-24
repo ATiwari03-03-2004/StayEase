@@ -57,6 +57,7 @@ app.post("/listings/new", async (req, res) => {
   //   country: country,
   // });
   await new Listing(req.body.listing).save();
+  res.redirect("/listings");
 });
 
 // Show Route

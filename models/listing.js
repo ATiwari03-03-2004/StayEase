@@ -15,7 +15,7 @@ const listingSchema = mongoose.Schema({
     set: (v) => (v === "" ? "https://unsplash.com/photos/the-sun-is-setting-over-a-mountain-range-kZvrNBMh6Po" : v),
   },
   price: {
-    type: String,
+    type: Number,
     required: true,
   },
   location: {
