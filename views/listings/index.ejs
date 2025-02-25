@@ -7,12 +7,12 @@
   </head>
   <body>
     <h3>All Listings</h3>
-    <form action="http://localhost:8080/listings/new" method="get">
+    <form action="/listings/new" method="get">
       <button type="submit">Create New Listing</button>
     </form>
     <ul>
       <% for(listing of allListings) { %>
-        <li><a href="http://localhost:8080/listings/<%= listing._id %>"><%= listing.title %></a></li>
+        <li><a href="/listings/<%= listing._id %>"><%= listing.title %></a></li>
       <% } %>
     </ul>
   </body>

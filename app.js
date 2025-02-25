@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 const path = require("path");
+const methodOverride = require("method-override");
+const engine = require("ejs-mate");
 const mongoose = require("mongoose");
 const Listing = require("./models/listing.js");
 
@@ -14,6 +16,10 @@ async function main(params) {
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(methodOverride("_method"));
+
+app.engine("ejs", engine);
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -65,6 +71,27 @@ app.get("/listings/:id", async (req, res) => {
   let { id } = req.params;
   let listing = await Listing.findById(id);
   res.render("listings/show.ejs", { listing });
+});
+
+// Edit Route
+app.get("/listings/:id/edit", async (req, res) => {
+  let { id } = req.params;
+  let data = await Listing.findById(id);
+  res.render("listings/edit.ejs", { listing: data });
+});
+
+// Update Route
+app.patch("/listings/:id/edit", async (req, res) => {
+  let { id } = req.params;
+  await Listing.findByIdAndUpdate(id, { $set: { ...req.body.listing } });
+  res.redirect(`/listings/${id}`);
+});
+
+// Delete Route
+app.delete("/listings/:id/delete", async (req, res) => {
+  let { id } = req.params;
+  await Listing.findByIdAndDelete(id);
+  res.redirect("/listings");
 });
 
 app.listen(8080, () => {
