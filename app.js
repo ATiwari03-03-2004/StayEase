@@ -17,6 +17,7 @@ async function main(params) {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
+app.use(express.static(path.join(__dirname, "public")));
 
 app.engine("ejs", engine);
 
