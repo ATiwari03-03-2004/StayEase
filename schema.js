@@ -10,3 +10,5 @@ const listingSchema = Joi.object({
     country: Joi.string().required(),
   }).required(),
 });
+
+module.exports = { listingSchema };

@@ -7,13 +7,13 @@ const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const mongoose = require("mongoose");
 const Listing = require("./models/listing.js");
-const { stat } = require("fs");
+const { listingSchema } = require("./schema.js");
 
 main()
   .then((res) => console.log("Connected to DB!"))
   .catch((err) => console.log(err));
 
-async function main(params) {
+async function main() {
   await mongoose.connect("mongodb://127.0.0.1:27017/stayease");
 }
 
@@ -26,6 +26,15 @@ app.engine("ejs", engine);
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+
+const validateListing = (req, res, next) => {
+  // => Handling schema validation using joi
+  let { error } = listingSchema.validate(req.body);
+  if (error) {
+    let errMsg = error.details.map((e) => e.message).join(", ");
+    next(new ExpressError(400, errMsg));
+  } else next();
+};
 
 app.get("/", (req, res) => {
   res.send("Server is on");
@@ -61,6 +70,7 @@ app.get("/listings/new", (req, res) => {
 // Create Route
 app.post(
   "/listings/new",
+  validateListing,
   wrapAsync(async (req, res, next) => {
     // let { title, description, image, price, location, country } = req.body;
     // let listing = new Listing({
@@ -71,8 +81,6 @@ app.post(
     //   location: location,
     //   country: country,
     // });
-    if (!req.body.listing)
-      next(new ExpressError(400, "Bad Request, Send valid data for listing!"));
     await new Listing(req.body.listing).save();
     res.redirect("/listings");
   })
@@ -101,6 +109,7 @@ app.get(
 // Update Route
 app.patch(
   "/listings/:id/edit",
+  validateListing,
   wrapAsync(async (req, res) => {
     if (!req.body.listing)
       next(new ExpressError(400, "Bad Request, Send valid data for listing!"));
