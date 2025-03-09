@@ -26,6 +26,7 @@ router.post(
     let listing = await Listing.findById(id);
     listing.reviews.push(data);
     await listing.save(); // Updates the listing review
+    req.flash("Success", "Your review has been successfully submitted!");
     res.redirect(`/listings/${id}`);
   })
 );
@@ -35,14 +36,9 @@ router.delete(
   "/:rId",
   wrapAsync(async (req, res, next) => {
     let { id, rId } = req.params;
-    // let listing = await Listing.findById(id);
-    // listing.reviews.splice(listing.reviews.indexOf(rId), 1);
-    // await listing.save();
-
-    // OR
-
     await Listing.findByIdAndUpdate(id, { $pull: { reviews: rId } });
     await Review.findByIdAndDelete(rId);
+    req.flash("Success", "Your review has been successfully deleted!");
     res.redirect(`/listings/${id}`);
   })
 );

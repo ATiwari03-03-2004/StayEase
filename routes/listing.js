@@ -33,16 +33,8 @@ router.post(
   "/new",
   validateListing,
   wrapAsync(async (req, res, next) => {
-    // let { title, description, image, price, location, country } = req.body;
-    // let listing = new Listing({
-    //   title: title,
-    //   description: description,
-    //   image: image,
-    //   price: price,
-    //   location: location,
-    //   country: country,
-    // });
     await new Listing(req.body.listing).save();
+    req.flash("Success", "Your listing has been created successfully!");
     res.redirect("/listings");
   })
 );
@@ -53,7 +45,10 @@ router.get(
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     let listing = await Listing.findById(id).populate("reviews");
-    res.render("listings/show.ejs", { listing });
+    if (listing === null) {
+      req.flash("Failure", "The listing you are trying to access does not exist!");
+      res.redirect("/listings");
+    } else res.render("listings/show.ejs", { listing });
   })
 );
 
@@ -62,8 +57,11 @@ router.get(
   "/:id/edit",
   wrapAsync(async (req, res) => {
     let { id } = req.params;
-    let data = await Listing.findById(id);
-    res.render("listings/edit.ejs", { listing: data });
+    let listing = await Listing.findById(id);
+    if (!listing) {
+      req.flash("Failure", "The listing you are trying to access does not exist!");
+      res.redirect("/listings");
+    } else res.render("listings/edit.ejs", { listing });
   })
 );
 
@@ -76,6 +74,7 @@ router.patch(
       next(new ExpressError(400, "Bad Request, Send valid data for listing!"));
     let { id } = req.params;
     await Listing.findByIdAndUpdate(id, { $set: { ...req.body.listing } });
+    req.flash("Success", "Your listing has been updated successfully!");
     res.redirect(`/listings/${id}`);
   })
 );
@@ -86,6 +85,7 @@ router.delete(
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     await Listing.findByIdAndDelete(id);
+    req.flash("Success", "Your listing has been deleted successfully!");
     res.redirect("/listings");
   })
 );
