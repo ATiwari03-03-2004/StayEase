@@ -12,13 +12,17 @@
     />
     <div class="card-body">
       <p class="card-text">
-        <%= listing.description %><br />
-        &#8377; <%= listing.price.toLocaleString("en-IN") %> / night<br />
-        <%= listing.location %><br />
-        <%= listing.country %>
+        Listed by <b><i><%= listing.owner.username %></i></b>
       </p>
+      <p class="card-text"><%= listing.description %></p>
+      <p class="card-text">
+        &#8377; <%= listing.price.toLocaleString("en-IN") %> / night
+      </p>
+      <p class="card-text"><%= listing.location %></p>
+      <p class="card-text"><%= listing.country %></p>
     </div>
   </div>
+  <% if (currentUser && currentUser.equals(listing.owner)) { %>
   <br />
   <div class="btns mb-3">
     <a href="/listings/<%=listing._id %>/edit" class="btn edit-btn offset-sm-3"
@@ -31,6 +35,7 @@
       <button type="submit" class="btn btn-dark">Delete</button>
     </form>
   </div>
+  <% } %>
   <div class="col-sm-8 offset-sm-3 mb-3">
     <hr />
     <p><b>Leave a Review</b></p>
@@ -74,13 +79,19 @@
       <% for (review of listing.reviews) { %>
       <div class="card col-sm-5 ms-3 mb-3">
         <div class="card-body">
-          <h6 div class="card-title mt-2">Username</h6>
+          <h6 div class="card-title mt-2"><%= review.owner.username %></h6>
           <p class="card-text"><%= review.rating %> star</p>
-          <p class="card-text"><%= review.comment %></p>
+          <p class="card-text mb-2"><%= review.comment %></p>
         </div>
-        <form action="/listings/<%= listing._id %>/review/<%= review._id %>?_method=DELETE" class="mb-2 mt-2" method="post">
+        <% if (currentUser && currentUser.equals(review.owner)) { %>
+        <form
+          action="/listings/<%= listing._id %>/review/<%= review._id %>?_method=DELETE"
+          class="mb-2 mt-2"
+          method="post"
+        >
           <button type="submit" class="btn btn-dark btn-sm">Delete</button>
         </form>
+        <% } %>
       </div>
       <% } %>
     </div>
