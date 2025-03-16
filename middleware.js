@@ -1,6 +1,9 @@
 const Listing = require("./models/listing.js");
 let Review = require("./models/review.js");
+const ExpressError = require("./utils/ExpressError.js");
+const { reviewSchema, listingSchema } = require("./schema.js");
 
+// Checks if a user has logged in before accessing certain privelaged routes
 const userAuth = (req, res, next) => {
   if (!req.isAuthenticated()) {
     // res.locals.redirectURL = req.originalUrl;
@@ -14,6 +17,7 @@ const userAuth = (req, res, next) => {
   return next();
 };
 
+// Post-login page handling
 const setRedirectLocals = (req, res, next) => {
   if (req.session.redirectURL) res.locals.redirectURL = req.session.redirectURL;
   return next();
@@ -51,4 +55,24 @@ const authorizeReviewOwner = async (req, res, next) => {
   return next();
 };
 
-module.exports = { userAuth, setRedirectLocals, authorizeUser, authorizeReviewOwner };
+// Validating listing using listingSchema defined in joi
+const validateListing = (req, res, next) => {
+  // => Handling listing schema validation using joi
+  let { error } = listingSchema.validate(req.body);
+  if (error) {
+    let errMsg = error.details.map((err) => err.message).join(", ");
+    next(new ExpressError(400, errMsg));
+  } else next();
+};
+
+// Validating review using reviewSchema defined in joi
+const validateReview = (req, res, next) => {
+  // => Handling review schema validation using joi
+  let { error } = reviewSchema.validate(req.body);
+  if (error) {
+    let errMsg = error.details.map((err) => err.message).join(", ");
+    next(new ExpressError(400, errMsg));
+  } else next();
+};
+
+module.exports = { userAuth, setRedirectLocals, authorizeUser, authorizeReviewOwner, validateListing, validateReview };

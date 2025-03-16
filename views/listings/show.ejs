@@ -37,6 +37,7 @@
   </div>
   <% } %>
   <div class="col-sm-8 offset-sm-3 mb-3">
+    <% if (currentUser) { %>
     <hr />
     <p><b>Leave a Review</b></p>
     <form
@@ -73,13 +74,14 @@
         <button type="submit" class="btn btn-outline-dark">Submit</button>
       </div>
     </form>
+    <% } %> <% if (listing.reviews.length > 0) { %>
     <hr />
     <p><b>All Reviews</b></p>
     <div class="row">
       <% for (review of listing.reviews) { %>
       <div class="card col-sm-5 ms-3 mb-3">
         <div class="card-body">
-          <h6 div class="card-title mt-2"><%= review.owner.username %></h6>
+          <h6 div class="card-title mt-2">@<%= review.owner.username %></h6>
           <p class="card-text"><%= review.rating %> star</p>
           <p class="card-text mb-2"><%= review.comment %></p>
         </div>
@@ -95,5 +97,11 @@
       </div>
       <% } %>
     </div>
+    <% } else { %>
+    <hr />
+    <p class="offset-3 offset-sm-4">
+      <b><i>No Reviews yet!</i></b>
+    </p>
+    <% } %>
   </div>
 </div>
