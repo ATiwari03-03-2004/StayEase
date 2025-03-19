@@ -10,46 +10,34 @@ const {
 } = require("../middleware.js");
 const listingControllers = require("../controllers/listings.js");
 
-// Index Route
-router.get("/", wrapAsync(listingControllers.index));
+router.get("/", wrapAsync(listingControllers.index)); // Index Route
 
-// New Route
-router.get("/new", userAuth, listingControllers.renderNewListingForm);
+router
+  .route("/new")
+  .get(userAuth, listingControllers.renderNewListingForm) // New Route
+  .post(userAuth, validateListing, wrapAsync(listingControllers.createListing)); // Create Route
 
-// Create Route
-router.post(
-  "/new",
-  userAuth,
-  validateListing,
-  wrapAsync(listingControllers.createListing)
-);
+router.get("/:id", wrapAsync(listingControllers.showListing)); // Show Route
 
-// Show Route
-router.get("/:id", wrapAsync(listingControllers.showListing));
+router
+  .route("/:id/edit")
+  .get(
+    userAuth,
+    authorizeUser,
+    wrapAsync(listingControllers.renderListingEditForm)
+  ) // Edit Route
+  .patch(
+    userAuth,
+    authorizeUser,
+    validateListing,
+    wrapAsync(listingControllers.updateListing)
+  ); // Update Route
 
-// Edit Route
-router.get(
-  "/:id/edit",
-  userAuth,
-  authorizeUser,
-  wrapAsync(listingControllers.renderListingEditForm)
-);
-
-// Update Route
-router.patch(
-  "/:id/edit",
-  userAuth,
-  authorizeUser,
-  validateListing,
-  wrapAsync(listingControllers.updateListing)
-);
-
-// Delete (listing) Route => Deleting reviews of the listing as well using post mongoose middleware.
 router.delete(
   "/:id/delete",
   userAuth,
   authorizeUser,
   wrapAsync(listingControllers.deleteListing)
-);
+); // Delete (listing) Route => Deleting reviews of the listing as well using post mongoose middleware.
 
 module.exports = router;
