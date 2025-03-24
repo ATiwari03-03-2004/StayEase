@@ -1,3 +1,5 @@
+if (process.env.NODE_ENV != "production") require("dotenv").config();
+
 const express = require("express");
 const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync.js");
@@ -10,12 +12,17 @@ const {
 } = require("../middleware.js");
 const listingControllers = require("../controllers/listings.js");
 
+// Multer-Cloudinary config
+const multer = require("multer");
+const { storage } = require("../cloudinaryConfig.js");
+const parser = multer({ storage });
+
 router.get("/", wrapAsync(listingControllers.index)); // Index Route
 
 router
   .route("/new")
-  .get(userAuth, listingControllers.renderNewListingForm) // New Route
-  .post(userAuth, validateListing, wrapAsync(listingControllers.createListing)); // Create Route
+  .get(userAuth, listingControllers.renderNewListingForm) // New Route 
+  .post(userAuth, parser.single("listing[image]"), validateListing, wrapAsync(listingControllers.createListing)); // Create Route
 
 router.get("/:id", wrapAsync(listingControllers.showListing)); // Show Route
 
@@ -29,6 +36,7 @@ router
   .patch(
     userAuth,
     authorizeUser,
+    parser.single("listing[image]"),
     validateListing,
     wrapAsync(listingControllers.updateListing)
   ); // Update Route

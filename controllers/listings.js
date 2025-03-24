@@ -1,4 +1,6 @@
 const Listing = require("../models/listing.js");
+const { cloudinary } = require("../cloudinaryConfig.js");
+const axios = require("axios");
 
 module.exports.index = async (req, res) => {
   let allListings = await Listing.find({});
@@ -11,9 +13,17 @@ module.exports.renderNewListingForm = (req, res) => {
 };
 
 module.exports.createListing = async (req, res, next) => {
-  let listing = req.body.listing;
+  let listing = new Listing(req.body.listing);
   listing.owner = req.user._id;
-  await new Listing(listing).save();
+  listing.image = { url: req.file.path, filename: req.file.filename };
+  let baseURL = "https://geocode.search.hereapi.com/v1/geocode?q=";
+  let address = encodeURIComponent(listing.location + listing.country);
+  let key = process.env.HERE_API_KEY;
+  let URL = `${baseURL}${address}&apiKey=${key}`;
+  let response = await axios.get(URL);
+  listing.latitude = response.data.items[0].position.lat;
+  listing.longitude = response.data.items[0].position.lng;
+  await listing.save();
   req.flash("success", "Your listing has been created successfully!");
   res.redirect("/listings");
 };
@@ -47,7 +57,9 @@ module.exports.renderListingEditForm = async (req, res) => {
   if (!listing) {
     req.flash("error", "The listing you are trying to access does not exist!");
     res.redirect("/listings");
-  } else res.render("listings/edit.ejs", { listing });
+  } else {
+    res.render("listings/edit.ejs", { listing });
+  }
 };
 
 module.exports.updateListing = async (req, res) => {
@@ -55,8 +67,30 @@ module.exports.updateListing = async (req, res) => {
     next(new ExpressError(400, "Bad Request, Send valid data for listing!"));
   let { id } = req.params;
   let listing = await Listing.findById(id);
+
   if (listing) {
-    await Listing.findByIdAndUpdate(id, { $set: { ...req.body.listing } });
+    let reqAddress =
+      req.body.listing.location + ", " + req.body.listing.country;
+    let listingAddress = listing.location + ", " + listing.country;
+    if (reqAddress && reqAddress !== listingAddress) {
+      listing.location = req.body.listing.location;
+      listing.country = req.body.listing.country;
+      let baseURL = "https://geocode.search.hereapi.com/v1/geocode?q=";
+      let address = encodeURIComponent(listing.location + listing.country);
+      let key = process.env.HERE_API_KEY;
+      let URL = `${baseURL}${address}&apiKey=${key}`;
+      let response = await axios.get(URL);
+      listing.latitude = response.data.items[0].position.lat;
+      listing.longitude = response.data.items[0].position.lng;
+    }
+    if (req.file) {
+      await cloudinary.uploader.destroy(listing.image.filename);
+      listing.image = { url: req.file.path, filename: req.file.filename };
+      await Listing.findByIdAndUpdate(id, {
+        $set: { ...req.body.listing, image: { ...listing.image }, latitude: listing.latitude, longitude: listing.longitude },
+      });
+    } else
+      await Listing.findByIdAndUpdate(id, { $set: { ...req.body.listing, latitude: listing.latitude, longitude: listing.longitude } });
     req.flash("success", "Your listing has been updated successfully!");
   }
   res.redirect(`/listings/${id}`);
@@ -64,7 +98,8 @@ module.exports.updateListing = async (req, res) => {
 
 module.exports.deleteListing = async (req, res) => {
   let { id } = req.params;
-  await Listing.findByIdAndDelete(id);
+  let listing = await Listing.findByIdAndDelete(id);
+  await cloudinary.uploader.destroy(listing.image.filename);
   req.flash("success", "Your listing has been deleted successfully!");
   res.redirect("/listings");
 };

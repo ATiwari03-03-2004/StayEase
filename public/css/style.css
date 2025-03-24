@@ -116,3 +116,16 @@ body {
 .btn {
   margin-right: 1rem;
 }
+
+/* Map */
+#map {
+  height: 55vh;
+  width: 55vw;
+}
+
+@media (max-width: 576px) {
+  #map {
+    height: 45vh;
+    width: 85vw;
+  }
+}

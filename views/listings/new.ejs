@@ -6,6 +6,7 @@
     <form
       action="/listings/new"
       class="needs-validation"
+      enctype="multipart/form-data"
       method="post"
       novalidate
     >
@@ -20,9 +21,7 @@
           required
         />
         <div class="valid-feedback">Title looks good!</div>
-        <div class="invalid-feedback">
-          Please provide a valid title.
-        </div>
+        <div class="invalid-feedback">Please provide a valid title.</div>
       </div>
       <div class="mb-3">
         <label for="description" class="form-label">Description</label>
@@ -33,18 +32,16 @@
           class="form-control"
           required
         ></textarea>
-        <div class="invalid-feedback">
-          Please provide a valid description.
-        </div>
+        <div class="invalid-feedback">Please provide a valid description.</div>
       </div>
       <div class="mb-3">
-        <label for="image" class="form-label">Image URL</label>
+        <label for="image" class="form-label">Listing Image</label>
         <input
-          type="text"
+          type="file"
           name="listing[image]"
           id="image"
           class="form-control"
-          placeholder="Enter image URL"
+          required
         />
       </div>
       <div class="row">
@@ -58,9 +55,7 @@
             placeholder="Enter price"
             required
           />
-          <div class="invalid-feedback">
-            Please provide a valid price.
-          </div>
+          <div class="invalid-feedback">Please provide a valid price.</div>
         </div>
         <div class="col-md-8 mb-3">
           <label for="country" class="form-label">Country</label>
@@ -72,9 +67,7 @@
             placeholder="Enter country"
             required
           />
-          <div class="invalid-feedback">
-            Please provide a valid country.
-          </div>
+          <div class="invalid-feedback">Please provide a valid country.</div>
         </div>
       </div>
       <div class="mb-3">
@@ -87,9 +80,7 @@
           class="form-control"
           required
         />
-        <div class="invalid-feedback">
-          Please provide a valid location.
-        </div>
+        <div class="invalid-feedback">Please provide a valid location.</div>
       </div>
       <br />
       <button type="submit" class="btn add-btn">Add</button>

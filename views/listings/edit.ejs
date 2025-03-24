@@ -7,6 +7,7 @@
       action="/listings/<%= listing._id %>/edit?_method=PATCH"
       method="post"
       class="needs-validation"
+      enctype="multipart/form-data"
       novalidate
     >
       <div class="mb-3">
@@ -21,9 +22,7 @@
           required
         />
         <div class="valid-feedback">Title looks good!</div>
-        <div class="invalid-feedback">
-          Please provide a valid title.
-        </div>
+        <div class="invalid-feedback">Please provide a valid title.</div>
       </div>
       <div class="mb-3">
         <label for="description" class="form-label">Description</label>
@@ -36,19 +35,20 @@
         >
 <%= listing.description %></textarea
         >
-        <div class="invalid-feedback">
-          Please provide a valid description.
-        </div>
+        <div class="invalid-feedback">Please provide a valid description.</div>
       </div>
       <div class="mb-3">
-        <label for="image" class="form-label">Image URL</label>
+        <label class="form-label">Original Image</label>
+        <br />
+        <img src="<%= listing.image.url %>" alt="<%= listing.title %>" width="250px" />
+      </div>
+      <div class="mb-3">
+        <label for="image" class="form-label">Upload Image</label>
         <input
-          type="text"
+          type="file"
           name="listing[image]"
           id="image"
           class="form-control"
-          placeholder="Enter image URL"
-          value="<%= listing.image %>"
         />
       </div>
       <div class="row">
@@ -63,9 +63,7 @@
             value="<%= listing.price %>"
             required
           />
-          <div class="invalid-feedback">
-            Please provide a valid price.
-          </div>
+          <div class="invalid-feedback">Please provide a valid price.</div>
         </div>
         <div class="col-md-8 mb-3">
           <label for="country" class="form-label">Country</label>
@@ -78,9 +76,7 @@
             placeholder="Enter country"
             required
           />
-          <div class="invalid-feedback">
-            Please provide a valid country.
-          </div>
+          <div class="invalid-feedback">Please provide a valid country.</div>
         </div>
       </div>
       <div class="mb-3">
@@ -94,9 +90,7 @@
           value="<%= listing.location %>"
           required
         />
-        <div class="invalid-feedback">
-          Please provide a valid location.
-        </div>
+        <div class="invalid-feedback">Please provide a valid location.</div>
       </div>
       <br />
       <button type="submit" class="btn edit-btn">Edit</button>
