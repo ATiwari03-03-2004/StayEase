@@ -10,6 +10,7 @@ const sampleListings = [
     price: 1500,
     location: "Malibu",
     country: "United States",
+    filters: ["all_listings", "beachfront", "boats"],
   },
   {
     title: "Modern Loft in Downtown",
@@ -22,6 +23,7 @@ const sampleListings = [
     price: 1200,
     location: "New York City",
     country: "United States",
+    filters: ["all_listings", "bed_n_breakfast", "iconic_city", "trending"],
   },
   {
     title: "Mountain Retreat",
@@ -34,6 +36,7 @@ const sampleListings = [
     price: 1000,
     location: "Aspen",
     country: "United States",
+    filters: ["all_listings", "amazing_pool", "mountain"],
   },
   {
     title: "Historic Villa in Tuscany",
@@ -46,6 +49,7 @@ const sampleListings = [
     price: 2500,
     location: "Florence",
     country: "Italy",
+    filters: ["all_listings", "amazing_pool", "trending"],
   },
   {
     title: "Secluded Treehouse Getaway",
@@ -58,6 +62,7 @@ const sampleListings = [
     price: 800,
     location: "Portland",
     country: "United States",
+    filters: ["all_listings", "mountain", "amazing_pool", "amazing_views"],
   },
   {
     title: "Beachfront Paradise",
@@ -70,6 +75,7 @@ const sampleListings = [
     price: 2000,
     location: "Cancun",
     country: "Mexico",
+    filters: ["all_listings", "beachfront", "amazing_views", "trending"],
   },
   {
     title: "Rustic Cabin by the Lake",
@@ -82,6 +88,7 @@ const sampleListings = [
     price: 900,
     location: "Lake Tahoe",
     country: "United States",
+    filters: ["all_listings", "lakefront", "amazing_views"],
   },
   {
     title: "Luxury Penthouse with City Views",
@@ -89,11 +96,12 @@ const sampleListings = [
       "Indulge in luxury living with panoramic city views from this stunning penthouse apartment.",
     image: {
       filename: "listingimage",
-      url: "https://images.unsplash.com/photo-1622396481328-9b1b78cdd9fd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8c2t5JTIwdmFjYXRpb258ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60",
+      url: "https://blucap.in/images/Luxury/one/two/a-view-from-a-height-life-in-a-penthouse-001.jpg",
     },
     price: 3500,
     location: "Los Angeles",
     country: "United States",
+    filters: ["all_listings", "amazing_pool", "iconic_city", "rooms"],
   },
   {
     title: "Ski-In/Ski-Out Chalet",
@@ -101,11 +109,12 @@ const sampleListings = [
       "Hit the slopes right from your doorstep in this ski-in/ski-out chalet in the Swiss Alps.",
     image: {
       filename: "listingimage",
-      url: "https://images.unsplash.com/photo-1502784444187-359ac186c5bb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHNreSUyMHZhY2F0aW9ufGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
+      url: "https://tjbprivatetravel.com/wp-content/uploads/2023/11/chalet-evening-lit-up-looking-towards-tasch-1-scaled-9-compressed.jpg",
     },
     price: 3000,
     location: "Verbier",
     country: "Switzerland",
+    filters: ["all_listings", "arctic", "play"],
   },
   {
     title: "Safari Lodge in the Serengeti",
@@ -118,6 +127,7 @@ const sampleListings = [
     price: 4000,
     location: "Serengeti National Park",
     country: "Tanzania",
+    filters: ["all_listings", "lakefront", "mountain", "trending", "park"],
   },
   {
     title: "Historic Canal House",
@@ -130,6 +140,7 @@ const sampleListings = [
     price: 1800,
     location: "Amsterdam",
     country: "Netherlands",
+    filters: ["all_listings", "camping", "amazing_views", "trending"],
   },
   {
     title: "Private Island Retreat",
@@ -142,6 +153,7 @@ const sampleListings = [
     price: 10000,
     location: "Fiji",
     country: "Fiji",
+    filters: ["all_listings", "mountain", "amazing_views"],
   },
   {
     title: "Charming Cottage in the Cotswolds",
@@ -154,6 +166,7 @@ const sampleListings = [
     price: 1200,
     location: "Cotswolds",
     country: "United Kingdom",
+    filters: ["all_listings", "bed_n_breakfast", "amazing_views"],
   },
   {
     title: "Historic Brownstone in Boston",
@@ -166,6 +179,7 @@ const sampleListings = [
     price: 2200,
     location: "Boston",
     country: "United States",
+    filters: ["all_listings", "iconic_city"],
   },
   {
     title: "Beachfront Bungalow in Bali",
@@ -178,6 +192,7 @@ const sampleListings = [
     price: 1800,
     location: "Bali",
     country: "Indonesia",
+    filters: ["all_listings", "beachfront", "amazing_pool", "trending"],
   },
   {
     title: "Mountain View Cabin in Banff",
@@ -190,6 +205,7 @@ const sampleListings = [
     price: 1500,
     location: "Banff",
     country: "Canada",
+    filters: ["all_listings", "mountain", "amazing_views"],
   },
   {
     title: "Art Deco Apartment in Miami",
@@ -202,6 +218,7 @@ const sampleListings = [
     price: 1600,
     location: "Miami",
     country: "United States",
+    filters: ["all_listings", "iconic_city", "trending"],
   },
   {
     title: "Tropical Villa in Phuket",
@@ -214,6 +231,7 @@ const sampleListings = [
     price: 3000,
     location: "Phuket",
     country: "Thailand",
+    filters: ["all_listings", "beachfront", "amazing_pool", "trending"],
   },
   {
     title: "Historic Castle in Scotland",
@@ -226,6 +244,7 @@ const sampleListings = [
     price: 4000,
     location: "Scottish Highlands",
     country: "United Kingdom",
+    filters: ["all_listings", "castles", "amazing_views"],
   },
   {
     title: "Desert Oasis in Dubai",
@@ -238,6 +257,7 @@ const sampleListings = [
     price: 5000,
     location: "Dubai",
     country: "United Arab Emirates",
+    filters: ["all_listings", "amazing_pool", "trending"],
   },
   {
     title: "Rustic Log Cabin in Montana",
@@ -250,6 +270,7 @@ const sampleListings = [
     price: 1100,
     location: "Montana",
     country: "United States",
+    filters: ["all_listings", "mountain", "farms"],
   },
   {
     title: "Beachfront Villa in Greece",
@@ -262,6 +283,7 @@ const sampleListings = [
     price: 2500,
     location: "Mykonos",
     country: "Greece",
+    filters: ["all_listings", "beachfront", "amazing_views"],
   },
   {
     title: "Eco-Friendly Treehouse Retreat",
@@ -274,6 +296,7 @@ const sampleListings = [
     price: 750,
     location: "Costa Rica",
     country: "Costa Rica",
+    filters: ["all_listings", "camping", "amazing_views"],
   },
   {
     title: "Historic Cottage in Charleston",
@@ -286,6 +309,7 @@ const sampleListings = [
     price: 1600,
     location: "Charleston",
     country: "United States",
+    filters: ["all_listings", "bed_n_breakfast", "iconic_city"],
   },
   {
     title: "Modern Apartment in Tokyo",
@@ -298,6 +322,7 @@ const sampleListings = [
     price: 2000,
     location: "Tokyo",
     country: "Japan",
+    filters: ["all_listings", "iconic_city"],
   },
   {
     title: "Lakefront Cabin in New Hampshire",
@@ -310,6 +335,7 @@ const sampleListings = [
     price: 1200,
     location: "New Hampshire",
     country: "United States",
+    filters: ["all_listings", "lakefront", "amazing_views"],
   },
   {
     title: "Luxury Villa in the Maldives",
@@ -322,6 +348,7 @@ const sampleListings = [
     price: 6000,
     location: "Maldives",
     country: "Maldives",
+    filters: ["all_listings", "beachfront", "amazing_pool", "trending"],
   },
   {
     title: "Ski Chalet in Aspen",
@@ -334,6 +361,7 @@ const sampleListings = [
     price: 4000,
     location: "Aspen",
     country: "United States",
+    filters: ["all_listings", "mountain", "arctic", "trending"],
   },
   {
     title: "Secluded Beach House in Costa Rica",
@@ -346,6 +374,20 @@ const sampleListings = [
     price: 1800,
     location: "Costa Rica",
     country: "Costa Rica",
+    filters: ["all_listings", "beachfront", "camping"],
+  },
+  {
+    title: "Luxury Dome in Patagonia",
+    description:
+      "Experience the magic of Patagonia in this luxury dome with breathtaking views of the mountains and glaciers.",
+    image: {
+      filename: "listingimage",
+      url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGRvbWV8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60",
+    },
+    price: 2200,
+    location: "Patagonia",
+    country: "Chile",
+    filters: ["all_listings", "domes", "amazing_views", "mountain"],
   },
 ];
 

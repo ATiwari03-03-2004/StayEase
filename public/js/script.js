@@ -20,3 +20,15 @@
     );
   });
 })();
+
+let navbar = document.querySelector(".navbar");
+let menu = document.querySelector(".navbar-toggler");
+if (window.matchMedia("(max-width: 768px)").matches) {
+  menu.addEventListener("click", function () {
+    if (!menu.classList.contains("collapsed")) {
+      navbar.style.height = "240px";
+    } else {
+      navbar.style.height = "5rem";
+    }
+  });
+}

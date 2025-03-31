@@ -3,12 +3,18 @@ const { cloudinary } = require("../cloudinaryConfig.js");
 const axios = require("axios");
 
 module.exports.index = async (req, res) => {
-  let allListings = await Listing.find({});
-  res.render("listings/index.ejs", { allListings });
+  if (req.query._filter) {
+    const filter = req.query._filter;
+    let allListings = await Listing.find({filters: { $in: filter }});
+    if (!allListings) req.flash("error", "The listing filter you are trying to use does not exist!");
+    else res.render("listings/index.ejs", { allListings, filter: filter });
+  } else {
+    let allListings = await Listing.find({});
+    res.render("listings/index.ejs", { allListings, filter: "all_listings" });
+  }
 };
 
 module.exports.renderNewListingForm = (req, res) => {
-  console.log(req.user);
   res.render("listings/new.ejs");
 };
 
@@ -21,8 +27,14 @@ module.exports.createListing = async (req, res, next) => {
   let key = process.env.HERE_API_KEY;
   let URL = `${baseURL}${address}&apiKey=${key}`;
   let response = await axios.get(URL);
-  listing.latitude = response.data.items[0].position.lat;
-  listing.longitude = response.data.items[0].position.lng;
+  let geometry = {
+    type: "Point",
+    coordinates: [
+      response.data.items[0].position.lng,
+      response.data.items[0].position.lat,
+    ],
+  };
+  listing.geometry = geometry;
   await listing.save();
   req.flash("success", "Your listing has been created successfully!");
   res.redirect("/listings");
@@ -30,12 +42,6 @@ module.exports.createListing = async (req, res, next) => {
 
 module.exports.showListing = async (req, res) => {
   let { id } = req.params;
-  // let listing = await Listing.findById(id)
-  //   .populate("reviews")
-  //   .populate("owner");
-  // await listing.populate("reviews.owner");
-
-  // or using nested populate
   let listing = await Listing.findById(id)
     .populate({
       path: "reviews",
@@ -80,17 +86,32 @@ module.exports.updateListing = async (req, res) => {
       let key = process.env.HERE_API_KEY;
       let URL = `${baseURL}${address}&apiKey=${key}`;
       let response = await axios.get(URL);
-      listing.latitude = response.data.items[0].position.lat;
-      listing.longitude = response.data.items[0].position.lng;
+      let geometry = {
+        type: "Point",
+        coordinates: [
+          response.data.items[0].position.lng,
+          response.data.items[0].position.lat,
+        ],
+      };
+      listing.geometry = geometry;
     }
     if (req.file) {
       await cloudinary.uploader.destroy(listing.image.filename);
       listing.image = { url: req.file.path, filename: req.file.filename };
       await Listing.findByIdAndUpdate(id, {
-        $set: { ...req.body.listing, image: { ...listing.image }, latitude: listing.latitude, longitude: listing.longitude },
+        $set: {
+          ...req.body.listing,
+          image: { ...listing.image },
+          geometry: listing.geometry,
+        },
       });
     } else
-      await Listing.findByIdAndUpdate(id, { $set: { ...req.body.listing, latitude: listing.latitude, longitude: listing.longitude } });
+      await Listing.findByIdAndUpdate(id, {
+        $set: {
+          ...req.body.listing,
+          geometry: listing.geometry,
+        },
+      });
     req.flash("success", "Your listing has been updated successfully!");
   }
   res.redirect(`/listings/${id}`);

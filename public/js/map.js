@@ -21,7 +21,25 @@ window.addEventListener("resize", () => map.getViewPort().resize());
 let behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
 let ui = H.ui.UI.createDefault(map, defaultLayers);
 
-var marker = new H.map.Marker({ lat: lati, lng: lngi });
+let icon = new H.map.Icon(
+  "https://res.cloudinary.com/dmnsftwem/image/upload/v1743022632/pngtree-house-location-pointer-vector-png-image_6648499_a1ygjg.png",
+  { size: { w: 50, h: 50 } }
+);
+let title = document.querySelector("h3");
+let marker = new H.map.Marker({ lat: lati, lng: lngi }, { icon: icon });
+marker.addEventListener('pointerenter', function() {
+  map.getViewPort().element.style.cursor = 'pointer';
+});
+marker.addEventListener('pointerleave', function() {
+  map.getViewPort().element.style.cursor = 'default';
+});
+marker.addEventListener("tap", function (e) {
+  ui.addBubble(
+    new H.ui.InfoBubble(e.target.getGeometry(), {
+      content: `<div style="white-space: nowrap; color: #fe424d;"><b>${title.innerText}</b></div>`,
+    })
+  );
+});
 
 function moveMapToListingLocation(map) {
   map.setCenter({ lat: lati, lng: lngi });

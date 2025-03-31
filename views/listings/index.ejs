@@ -1,6 +1,9 @@
-<% layout("/layouts/boilerplate") %>
-<h3 class="text-center">All Listings</h3>
-<div class="row row-cols-1 row-cols-sm-1 row-cols-md-3 row-cols-lg-4">
+<% layout("/layouts/boilerplate") %> <%- include("../includes/filter.ejs") %>
+<%- include("../includes/flash.ejs") %> <% if ((successMsg && successMsg.length
+> 0) || (failureMsg && failureMsg.length > 0)) { %>
+<div
+  class="row row-cols-1 row-cols-sm-1 row-cols-md-3 row-cols-lg-4 listing-container"
+>
   <% for(listing of allListings) { %>
   <a href="/listings/<%= listing._id %>" style="text-decoration: none">
     <div class="card listing-card col">
@@ -13,7 +16,9 @@
       <div class="card-img-overlay"></div>
       <div class="card-body">
         <p class="card-text">
-          <b><%= listing.title %></b><br />
+          <b><%= listing.title %></b>
+        </p>
+        <p class="card-text priceListing <%= listing.price %>">
           &#8377; <%= listing.price.toLocaleString("EN-IN") %> / night
         </p>
       </div>
@@ -21,3 +26,95 @@
   </a>
   <% } %>
 </div>
+<a
+  href="/listings?_filter="
+  role="button"
+  class="btn btn-dark"
+  id="allListingsMap"
+  href="/listings?_filter="
+  ><text>Show map <i class="fa-solid fa-map-location-dot"></i></text
+></a>
+<% } else { %>
+<div
+  class="row row-cols-1 row-cols-sm-1 row-cols-md-3 row-cols-lg-4 listing-container"
+  id="listing"
+>
+  <% for(listing of allListings) { %>
+  <a href="/listings/<%= listing._id %>" style="text-decoration: none">
+    <div class="card listing-card col">
+      <img
+        src="<%= listing.image.url %>"
+        class="card-img-top"
+        alt="<%= listing.title %>"
+        style="height: 20rem"
+      />
+      <div class="card-img-overlay"></div>
+      <div class="card-body">
+        <p class="card-text">
+          <b><%= listing.title %></b>
+        </p>
+        <p class="card-text priceListing <%= listing.price %>">
+          &#8377; <%= listing.price.toLocaleString("EN-IN") %> / night
+        </p>
+      </div>
+    </div>
+  </a>
+  <% } %>
+</div>
+<a
+  href="/listings?_filter="
+  role="button"
+  class="btn btn-dark"
+  id="allListingsMap"
+  href="/listings?_filter="
+  ><text>Show map <i class="fa-solid fa-map-location-dot"></i></text
+></a>
+<% } %>
+<script>
+  let taxToggleCheckbox = document.querySelector("#flexSwitchCheckDefault");
+  let prices = document.querySelectorAll(".priceListing");
+  taxToggleCheckbox.addEventListener("change", function () {
+    if (taxToggleCheckbox.checked) {
+      prices.forEach((price) => {
+        let costWithGST =
+          parseInt(price.classList[2]) + parseInt(price.classList[2]) * 0.18;
+        price.innerText = `${price.innerText.slice(
+          0,
+          1
+        )} ${costWithGST.toLocaleString("EN-IN")} / night with GST (18%)`;
+      });
+    } else {
+      prices.forEach((price) => {
+        price.innerText = `${price.innerText.slice(
+          0,
+          1
+        )} ${price.classList[2].toLocaleString("EN-IN")} / night`;
+      });
+    }
+  });
+
+  let filters = document.querySelectorAll(".filter");
+  filters.forEach((filter) => {
+    let filtr = "<%= filter %>";
+    if (filter.classList[0] === filtr) {
+      filter.classList.add("active");
+    }
+    filter.addEventListener("click", function (e) {
+      e.preventDefault();
+      if (!filter.classList.contains("active")) {
+        filter.style.opacity = "1";
+        filter.children[1].style.borderBottom = "2px solid black";
+        console.log(`${filter.href}${filter.classList[0]}`);
+        window.location.href = `${filter.href}${filter.classList[0]}`;
+      }
+    });
+  });
+
+  let flashCloseBtn = document.querySelector(".alert .btn-close");
+  let listingContainer = document.querySelector(".listing-container");
+  if (flashCloseBtn) {
+    flashCloseBtn.addEventListener("click", function () {
+      listingContainer.setAttribute("id", "listing");
+    });
+  }
+</script>

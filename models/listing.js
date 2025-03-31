@@ -38,14 +38,24 @@ const listingSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  latitude: {
-    type: Number,
+  geometry: {
+    type: {
+      type: String,
+      enum: ["Point"],
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
+  },
+  filters: {
+    type: [String],
+    enum: [
+      "all_listings", "domes", "trending", "rooms", "beachfront", "amazing_pool", "iconic_city", "castles", "camping", "lakefront", "mountain", "farms", "arctic", "amazing_views", "boats", "park", "play", "bed_n_breakfast",
+    ],
     required: true,
   },
-  longitude: {
-    type: Number,
-    required: true,
-  }
 });
 
 listingSchema.post("findOneAndDelete", async (listing, next) => {

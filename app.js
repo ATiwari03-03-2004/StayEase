@@ -69,11 +69,6 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// Home Route
-app.get("/", (req, res) => {
-  res.send("Server is on");
-});
-
 // Middleware, setting local variables for views
 app.use((req, res, next) => {
   res.locals.successMsg = req.flash("success");
