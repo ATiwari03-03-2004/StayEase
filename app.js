@@ -9,6 +9,7 @@ const cors = require("cors");
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
+const mapRouter = require("./routes/map.js");
 const session = require("express-session");
 const flash = require("connect-flash");
 const LocalStrategy = require("passport-local");
@@ -85,6 +86,9 @@ app.use("/listings", listingRouter);
 
 // Review Router
 app.use("/listings/:id/review", reviewRouter);
+
+// Map Router
+app.use("/map", mapRouter);
 
 // Invalid / Page not found route
 app.all("*", (req, res, next) => {

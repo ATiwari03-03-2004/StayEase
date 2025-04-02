@@ -25,7 +25,7 @@ let icon = new H.map.Icon(
   "https://res.cloudinary.com/dmnsftwem/image/upload/v1743022632/pngtree-house-location-pointer-vector-png-image_6648499_a1ygjg.png",
   { size: { w: 50, h: 50 } }
 );
-let title = document.querySelector("h3");
+let title = document.querySelector(".row h3");
 let marker = new H.map.Marker({ lat: lati, lng: lngi }, { icon: icon });
 marker.addEventListener('pointerenter', function() {
   map.getViewPort().element.style.cursor = 'pointer';

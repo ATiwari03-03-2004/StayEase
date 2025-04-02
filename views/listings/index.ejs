@@ -1,5 +1,7 @@
-<% layout("/layouts/boilerplate") %> <%- include("../includes/filter.ejs") %>
-<%- include("../includes/flash.ejs") %> <% if ((successMsg && successMsg.length
+<% layout("/layouts/boilerplate") %> 
+<%- include("../includes/filter.ejs") %>
+<%- include("../includes/flash.ejs") %> 
+<% if ((successMsg && successMsg.length
 > 0) || (failureMsg && failureMsg.length > 0)) { %>
 <div
   class="row row-cols-1 row-cols-sm-1 row-cols-md-3 row-cols-lg-4 listing-container"
@@ -62,11 +64,10 @@
   <% } %>
 </div>
 <a
-  href="/listings?_filter="
+  href="/map"
   role="button"
   class="btn btn-dark"
   id="allListingsMap"
-  href="/listings?_filter="
   ><text>Show map <i class="fa-solid fa-map-location-dot"></i></text
 ></a>
 <% } %>

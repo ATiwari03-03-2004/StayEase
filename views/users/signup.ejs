@@ -1,10 +1,15 @@
-<% layout("/layouts/boilerplate") %>
+<% layout("/layouts/boilerplate") %> <%- include("../includes/flash.ejs") %>
 <div class="row">
   <div class="col col-sm-6 offset-sm-3">
     <br />
     <h2>Sign-up</h2>
     <br />
-    <form action="/user/signup" class="needs-validation" method="post" novalidate>
+    <form
+      action="/user/signup"
+      class="needs-validation"
+      method="post"
+      novalidate
+    >
       <div class="mb-3">
         <label for="username" class="form-label">Username</label>
         <input
@@ -53,3 +58,7 @@
     </form>
   </div>
 </div>
+<script>
+  let flash = document.querySelector(".alert");
+  if (flash) flash.style.marginTop = "5px";
+</script>

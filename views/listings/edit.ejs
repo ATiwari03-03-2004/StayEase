@@ -1,4 +1,37 @@
 <% layout("/layouts/boilerplate") %>
+<style>
+  .form-check {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    align-items: start;
+  }
+
+  .form-check div {
+    margin: 0rem 1.5rem 1.5rem 0rem;
+  }
+
+  .form-check div input {
+    display: none;
+  }
+
+  .form-check div label {
+    border: 1px solid transparent;
+    padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+    border-radius: 0.8rem;
+    border: 1px solid black;
+  }
+
+  .form-check div label:hover {
+    background-color: rgba(128, 128, 128, 0.1);
+  }
+
+  .form-check div input:checked ~ label {
+    border: 1px solid rgb(13, 110, 253);
+    color: rgb(13, 110, 253);
+    background-color: rgba(128, 128, 128, 0.1);
+  }
+</style>
 <div class="row">
   <div class="col col-sm-8 offset-sm-2">
     <br />
@@ -40,7 +73,11 @@
       <div class="mb-3">
         <label class="form-label">Original Image</label>
         <br />
-        <img src="<%= listing.image.url %>" alt="<%= listing.title %>" width="250px" />
+        <img
+          src="<%= listing.image.url %>"
+          alt="<%= listing.title %>"
+          width="250px"
+        />
       </div>
       <div class="mb-3">
         <label for="image" class="form-label">Upload Image</label>
@@ -90,6 +127,429 @@
           value="<%= listing.location %>"
           required
         />
+        <div class="invalid-feedback">Please provide a valid location.</div>
+      </div>
+      <br />
+      <div class="mb-3">
+        <label class="form-label">Filters</label>
+        <div class="form-check">
+          <div>
+            <% if (listing.filters.indexOf("domes") >= 0) { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="domes"
+              id="filter1"
+              checked
+            />
+            <label class="form-check-label" for="filter1">
+              <i class="fa-solid fa-igloo"></i> Domes
+            </label>
+            <% } else { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="domes"
+              id="filter1"
+            />
+            <label class="form-check-label" for="filter1">
+              <i class="fa-solid fa-igloo"></i> Domes
+            </label>
+            <% } %>
+          </div>
+          <div>
+            <% if (listing.filters.indexOf("trending") >= 0) { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="trending"
+              id="filter2"
+              checked
+            />
+            <label class="form-check-label" for="filter2">
+              <i class="fa-solid fa-fire"></i> Trending
+            </label>
+            <% } else { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="trending"
+              id="filter2"
+            />
+            <label class="form-check-label" for="filter2">
+              <i class="fa-solid fa-fire"></i> Trending
+            </label>
+            <% } %>
+          </div>
+          <div>
+            <% if (listing.filters.indexOf("rooms") >= 0) { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="rooms"
+              id="filter3"
+              checked
+            />
+            <label class="form-check-label" for="filter3">
+              <i class="fa-solid fa-bed"></i> Rooms
+            </label>
+            <% } else { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="rooms"
+              id="filter3"
+            />
+            <label class="form-check-label" for="filter3">
+              <i class="fa-solid fa-bed"></i> Rooms
+            </label>
+            <% } %>
+          </div>
+          <div>
+            <% if (listing.filters.indexOf("beachfront") >= 0) { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="beachfront"
+              id="filter4"
+              checked
+            />
+            <label class="form-check-label" for="filter4">
+              <i class="fa-solid fa-umbrella-beach"></i> Beachfront
+            </label>
+            <% } else { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="beachfront"
+              id="filter4"
+            />
+            <label class="form-check-label" for="filter4">
+              <i class="fa-solid fa-umbrella-beach"></i> Beachfront
+            </label>
+            <% } %>
+          </div>
+          <div>
+            <% if (listing.filters.indexOf("amazing_pool") >= 0) { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="amazing_pool"
+              id="filter5"
+              checked
+            />
+            <label class="form-check-label" for="filter5">
+              <i class="fa-solid fa-person-swimming"></i> Amazing Pool
+            </label>
+            <% } else { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="amazing_pool"
+              id="filter5"
+            />
+            <label class="form-check-label" for="filter5">
+              <i class="fa-solid fa-person-swimming"></i> Amazing Pool
+            </label>
+            <% } %>
+          </div>
+          <div>
+            <% if (listing.filters.indexOf("iconic_city") >= 0) { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="iconic_city"
+              id="filter6"
+              checked
+            />
+            <label class="form-check-label" for="filter6">
+              <i class="fa-solid fa-mountain-city"></i> Iconic City
+            </label>
+            <% } else { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="iconic_city"
+              id="filter6"
+            />
+            <label class="form-check-label" for="filter6">
+              <i class="fa-solid fa-mountain-city"></i> Iconic City
+            </label>
+            <% } %>
+          </div>
+          <div>
+            <% if (listing.filters.indexOf("castles") >= 0) { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="castles"
+              id="filter7"
+              checked
+            />
+            <label class="form-check-label" for="filter7">
+              <i class="fa-brands fa-fort-awesome"></i> Castles
+            </label>
+            <% } else { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="castles"
+              id="filter7"
+            />
+            <label class="form-check-label" for="filter7">
+              <i class="fa-brands fa-fort-awesome"></i> Castles
+            </label>
+            <% } %>
+          </div>
+          <div>
+            <% if (listing.filters.indexOf("camping") >= 0) { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="camping"
+              id="filter8"
+              checked
+            />
+            <label class="form-check-label" for="filter8">
+              <i class="fa-solid fa-tents"></i> Camping
+            </label>
+            <% } else { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="camping"
+              id="filter8"
+            />
+            <label class="form-check-label" for="filter8">
+              <i class="fa-solid fa-tents"></i> Camping
+            </label>
+            <% } %>
+          </div>
+          <div>
+            <% if (listing.filters.indexOf("lakefront") >= 0) { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="lakefront"
+              id="filter9"
+              checked
+            />
+            <label class="form-check-label" for="filter9">
+              <i class="fa-solid fa-water"></i> Lakefront
+            </label>
+            <% } else { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="lakefront"
+              id="filter9"
+            />
+            <label class="form-check-label" for="filter9">
+              <i class="fa-solid fa-water"></i> Lakefront
+            </label>
+            <% } %>
+          </div>
+          <div>
+            <% if (listing.filters.indexOf("farms") >= 0) { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="farms"
+              id="filter11"
+              checked
+            />
+            <label class="form-check-label" for="filter11">
+              <i class="fa-solid fa-cow"></i> Farms
+            </label>
+            <% } else { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="farms"
+              id="filter11"
+            />
+            <label class="form-check-label" for="filter11">
+              <i class="fa-solid fa-cow"></i> Farms
+            </label>
+            <% } %>
+          </div>
+          <div>
+            <% if (listing.filters.indexOf("arctic") >= 0) { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="arctic"
+              id="filter12"
+              checked
+            />
+            <label class="form-check-label" for="filter12">
+              <i class="fa-solid fa-snowflake"></i> Arctic
+            </label>
+            <% } else { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="arctic"
+              id="filter12"
+            />
+            <label class="form-check-label" for="filter12">
+              <i class="fa-solid fa-snowflake"></i> Arctic
+            </label>
+            <% } %>
+          </div>
+          <div>
+            <% if (listing.filters.indexOf("amazing_views") >= 0) { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="amazing_views"
+              id="filter13"
+              checked
+            />
+            <label class="form-check-label" for="filter13">
+              <i class="fa-solid fa-mountain-sun"></i> Amazing Views
+            </label>
+            <% } else { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="amazing_views"
+              id="filter13"
+            />
+            <label class="form-check-label" for="filter13">
+              <i class="fa-solid fa-mountain-sun"></i> Amazing Views
+            </label>
+            <% } %>
+          </div>
+          <div>
+            <% if (listing.filters.indexOf("boats") >= 0) { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="boats"
+              id="filter14"
+              checked
+            />
+            <label class="form-check-label" for="filter14">
+              <i class="fa-solid fa-sailboat"></i> Boats
+            </label>
+            <% } else { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="boats"
+              id="filter14"
+            />
+            <label class="form-check-label" for="filter14">
+              <i class="fa-solid fa-sailboat"></i> Boats
+            </label>
+            <% } %>
+          </div>
+          <div>
+            <% if (listing.filters.indexOf("park") >= 0) { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="park"
+              id="filter15"
+              checked
+            />
+            <label class="form-check-label" for="filter15">
+              <i class="fa-solid fa-tree"></i> Park
+            </label>
+            <% } else { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="park"
+              id="filter15"
+            />
+            <label class="form-check-label" for="filter15">
+              <i class="fa-solid fa-tree"></i> Park
+            </label>
+            <% } %>
+          </div>
+          <div>
+            <% if (listing.filters.indexOf("play") >= 0) { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="play"
+              id="filter16"
+              checked
+            />
+            <label class="form-check-label" for="filter16">
+              <i class="fa-solid fa-baseball-bat-ball"></i> Play
+            </label>
+            <% } else { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="play"
+              id="filter16"
+            />
+            <label class="form-check-label" for="filter16">
+              <i class="fa-solid fa-baseball-bat-ball"></i> Play
+            </label>
+            <% } %>
+          </div>
+          <div>
+            <% if (listing.filters.indexOf("bed_n_breakfast") >= 0) { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="bed_n_breakfast"
+              id="filter17"
+              checked
+            />
+            <label class="form-check-label" for="filter17">
+              <i class="fa-solid fa-mug-hot"></i> Breakfast & Bread
+            </label>
+            <% } else { %>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="bed_n_breakfast"
+              id="filter17"
+            />
+            <label class="form-check-label" for="filter17">
+              <i class="fa-solid fa-mug-hot"></i> Breakfast & Bread
+            </label>
+            <% } %>
+          </div>
+        </div>
         <div class="invalid-feedback">Please provide a valid location.</div>
       </div>
       <br />

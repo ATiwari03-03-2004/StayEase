@@ -1,0 +1,130 @@
+<% layout("/layouts/mapBoilerplate") %>
+<script>
+  const mapToken = "<%= process.env.HERE_API_KEY %>";
+</script>
+<style>
+  .showAllMap {
+    height: 88vh !important;
+    width: 100% !important;
+  }
+
+  #mapLink {
+    text-decoration: none;
+    color: black;
+  }
+
+  #markerPopupImg {
+    height: 200px;
+    width: 100%;
+    border-top-left-radius: 0.8rem;
+    border-top-right-radius: 0.8rem;
+  }
+
+  #allListingsMap {
+    position: fixed;
+    top: 90%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 1rem;
+    height: 2.5rem;
+    width: 8.5rem;
+    z-index: 1;
+  }
+
+  #allListingsMap:hover {
+    box-shadow: 2px 2px 10px black;
+  }
+
+  .H_ib_body {
+    border-radius: 0.8rem;
+    box-shadow: 2px 2px 10px black;
+  }
+
+  .H_ib_close {
+    padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+    background-color: white;
+    border-radius: 100%;
+  }
+
+  .H_ib_close:hover {
+    box-shadow: 2px 2px 10px black;
+  }
+
+  .H_ib_content {
+    margin: 0 !important;
+  }
+</style>
+<div class="listings" id="map-listing" style="display: none">
+  <% for (listing of listings) { %>
+  <div class="listing">
+    <p class="id"><%= listing._id %></p>
+    <p class="title"><%= listing.title %></p>
+    <p class="imageUrl"><%= listing.image.url %></p>
+    <p class="price">&#8377; <%= listing.price.toLocaleString("EN-IN") %></p>
+    <p class="geometry">
+      <%= listing.geometry.coordinates[1] %> | <%=
+      listing.geometry.coordinates[0] %>
+    </p>
+  </div>
+  <% } %>
+</div>
+<div id="map" class="showAllMap"></div>
+<a href="/listings" role="button" class="btn btn-dark" id="allListingsMap"
+  ><text>Show listing <i class="fa-solid fa-list"></i></text
+></a>
+<script>
+  let platform = new H.service.Platform({
+    apikey: mapToken,
+  });
+  let defaultLayers = platform.createDefaultLayers();
+  let map = new H.Map(
+    document.getElementById("map"),
+    defaultLayers.vector.normal.map,
+    {
+      center: { lat: 20.5937, lng: 78.9629 },
+      zoom: 4,
+      pixelRatio: window.devicePixelRatio || 1,
+    }
+  );
+  window.addEventListener("resize", () => map.getViewPort().resize());
+  let behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+  let ui = H.ui.UI.createDefault(map, defaultLayers);
+
+  let icon = new H.map.Icon(
+    "https://res.cloudinary.com/dmnsftwem/image/upload/v1743022632/pngtree-house-location-pointer-vector-png-image_6648499_a1ygjg.png",
+    { size: { w: 50, h: 50 } }
+  );
+  let listings = document.querySelectorAll("#map-listing .listing");
+  listings.forEach((listing) => {
+    let geometry = listing.children[4].innerText.trim();
+    let idx = geometry.indexOf(" | ");
+    let latitude = parseFloat(geometry.slice(0, idx));
+    let longitude = parseFloat(geometry.slice(idx + 3));
+    let marker = new H.map.Marker(
+      { lat: latitude, lng: longitude },
+      { icon: icon }
+    );
+    marker.addEventListener("pointerenter", function () {
+      map.getViewPort().element.style.cursor = "pointer";
+    });
+    marker.addEventListener("pointerleave", function () {
+      map.getViewPort().element.style.cursor = "default";
+    });
+    marker.addEventListener("tap", function (e) {
+      ui.getBubbles().forEach(function (bubble) {
+        ui.removeBubble(bubble);
+      });
+      let id = listing.children[0].innerText;
+      let title = listing.children[1].innerText;
+      let imageUrl = listing.children[2].innerText;
+      let price = listing.children[3].innerText;
+      let url = `/listings/${id}`;
+      ui.addBubble(
+        new H.ui.InfoBubble(e.target.getGeometry(), {
+          content: `<a id="mapLink" href=${url}><div style="white-space: nowrap;"><div class="markerImg" style="width: 100%;"><img src=${imageUrl} id="markerPopupImg" alt=${title}></div><div class="markerInfo" style="margin: 0.5rem;"><h4 style="margin-bottom: 0.2rem;">${title}</h4><p style="font-size: 1.2rem; margin-bottom: 0.2rem;">${price} / night</p></div></div></a>`,
+        })
+      );
+    });
+    map.addObject(marker);
+  });
+</script>

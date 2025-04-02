@@ -45,14 +45,14 @@
       type="text/javascript"
       src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"
     ></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/rating.css" />
   </head>
   <body>
     <%- include("../includes/navbar.ejs") %>
-    <div class="container-fluid containing ps-4 pe-4"><%- body %></div>
-    <%- include("../includes/footer.ejs") %>
+    <div class="container-fluid containing ps-4 pe-4">
+      <%- body %>
+    </div>
     <script src="/js/script.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

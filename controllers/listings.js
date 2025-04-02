@@ -5,8 +5,12 @@ const axios = require("axios");
 module.exports.index = async (req, res) => {
   if (req.query._filter) {
     const filter = req.query._filter;
-    let allListings = await Listing.find({filters: { $in: filter }});
-    if (!allListings) req.flash("error", "The listing filter you are trying to use does not exist!");
+    let allListings = await Listing.find({ filters: { $in: filter } });
+    if (!allListings)
+      req.flash(
+        "error",
+        "The listing filter you are trying to use does not exist!"
+      );
     else res.render("listings/index.ejs", { allListings, filter: filter });
   } else {
     let allListings = await Listing.find({});
@@ -20,6 +24,7 @@ module.exports.renderNewListingForm = (req, res) => {
 
 module.exports.createListing = async (req, res, next) => {
   let listing = new Listing(req.body.listing);
+  listing.filters.push("all_listings");
   listing.owner = req.user._id;
   listing.image = { url: req.file.path, filename: req.file.filename };
   let baseURL = "https://geocode.search.hereapi.com/v1/geocode?q=";
@@ -105,13 +110,14 @@ module.exports.updateListing = async (req, res) => {
           geometry: listing.geometry,
         },
       });
-    } else
+    } else {
       await Listing.findByIdAndUpdate(id, {
         $set: {
           ...req.body.listing,
           geometry: listing.geometry,
         },
       });
+    }
     req.flash("success", "Your listing has been updated successfully!");
   }
   res.redirect(`/listings/${id}`);

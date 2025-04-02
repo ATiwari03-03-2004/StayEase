@@ -2,6 +2,22 @@
 <script>
   const mapToken = "<%= process.env.HERE_API_KEY %>";
 </script>
+
+<style>
+  /* Map */
+  #map {
+    height: 55vh;
+    width: 55vw;
+  }
+
+  @media (max-width: 576px) {
+    #map {
+      height: 45vh;
+      width: 85vw;
+    }
+  }
+</style>
+<%- include("../includes/flash.ejs") %>
 <div class="row mt-3">
   <div class="col-sm-8 offset-sm-3">
     <h3><%= listing.title %></h3>
@@ -148,7 +164,14 @@
   <div class="col-sm-8 offset-sm-3 mb-3 mt-3">
     <hr />
     <h5>Where you'll be</h5>
-    <div id="map" class="lat:<%= listing.geometry.coordinates[1] %> | lng:<%= listing.geometry.coordinates[0] %>"></div>
+    <div
+      id="map"
+      class="lat:<%= listing.geometry.coordinates[1] %> | lng:<%= listing.geometry.coordinates[0] %>"
+    ></div>
   </div>
 </div>
+<script>
+  let flash = document.querySelector(".alert");
+  if (flash) flash.style.marginTop = "5px";
+</script>
 <script src="/js/map.js"></script>

@@ -1,4 +1,126 @@
 <% layout("/layouts/boilerplate") %>
+<script>
+  const mapToken = "<%= process.env.HERE_API_KEY %>";
+</script>
+
+<style>
+  .modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content {
+    width: 100%;
+  }
+
+  #map {
+    width: 100%;
+  }
+
+  #address:hover {
+    cursor: not-allowed;
+  }
+
+  #disabled:hover {
+    cursor: not-allowed !important;
+  }
+
+  .form-check {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    align-items: start;
+  }
+
+  .form-check div {
+    margin: 0rem 1.5rem 1.5rem 0rem;
+  }
+
+  .form-check div input {
+    display: none;
+  }
+
+  .form-check div label {
+    cursor: pointer;
+    border: 1px solid transparent;
+    padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+    border-radius: 0.8rem;
+    border: 1px solid black;
+  }
+
+  .form-check div label:hover {
+    background-color: rgba(128, 128, 128, 0.1);
+  }
+
+  .form-check div input:checked ~ label {
+    border: 1px solid rgb(13, 110, 253);
+    color: rgb(13, 110, 253);
+    background-color: rgba(128, 128, 128, 0.1);
+  }
+
+  @media (max-width: 382px) {
+    .verifyButtons {
+      flex-direction: column;
+      justify-content: space-evenly !important;
+      align-items: start !important;
+    }
+
+    .verifyButtons button {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .latitude:hover input,
+  .longitude:hover input {
+    cursor: not-allowed;
+  }
+</style>
+
+<div class="modal fade" id="exampleModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="head">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">
+            Is the marker in the right spot?
+          </h1>
+          <p style="font-size: 0.9rem">
+            If not drag
+            <img
+              src="https://res.cloudinary.com/dmnsftwem/image/upload/v1743022632/pngtree-house-location-pointer-vector-png-image_6648499_a1ygjg.png"
+              style="height: 30px; width: 30px"
+              alt="marker"
+            />
+            to the correct place!
+          </p>
+        </div>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="address" class="form-label">Provided Address</label>
+          <input
+            type="text"
+            id="address"
+            class="form-control"
+            placeholder="Enter your full address"
+            disabled
+          />
+          <p style="font-size: 0.75rem">
+            To change address, change Location and Country fields.
+          </p>
+        </div>
+        <div id="map"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="row">
   <div class="col col-sm-8 offset-sm-2">
     <br />
@@ -44,6 +166,216 @@
           required
         />
       </div>
+      <div class="mb-3">
+        <label class="form-label">Filters</label>
+        <div class="form-check">
+          <div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="domes"
+              id="filter1"
+            />
+            <label class="form-check-label" for="filter1">
+              <i class="fa-solid fa-igloo"></i> Domes
+            </label>
+          </div>
+          <div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="trending"
+              id="filter2"
+            />
+            <label class="form-check-label" for="filter2">
+              <i class="fa-solid fa-fire"></i> Trending
+            </label>
+          </div>
+          <div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="rooms"
+              id="filter3"
+            />
+            <label class="form-check-label" for="filter3">
+              <i class="fa-solid fa-bed"></i> Rooms
+            </label>
+          </div>
+          <div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="beachfront"
+              id="filter4"
+            />
+            <label class="form-check-label" for="filter4">
+              <i class="fa-solid fa-umbrella-beach"></i> Beachfront
+            </label>
+          </div>
+          <div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="amazing_pool"
+              id="filter5"
+            />
+            <label class="form-check-label" for="filter5">
+              <i class="fa-solid fa-person-swimming"></i> Amazing Pool
+            </label>
+          </div>
+          <div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="iconic_city"
+              id="filter6"
+            />
+            <label class="form-check-label" for="filter6">
+              <i class="fa-solid fa-mountain-city"></i> Iconic City
+            </label>
+          </div>
+          <div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="castles"
+              id="filter7"
+            />
+            <label class="form-check-label" for="filter7">
+              <i class="fa-brands fa-fort-awesome"></i> Castles
+            </label>
+          </div>
+          <div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="camping"
+              id="filter8"
+            />
+            <label class="form-check-label" for="filter8">
+              <i class="fa-solid fa-tents"></i> Camping
+            </label>
+          </div>
+          <div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="lakefront"
+              id="filter9"
+            />
+            <label class="form-check-label" for="filter9">
+              <i class="fa-solid fa-water"></i> Lakefront
+            </label>
+          </div>
+          <div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="mountain"
+              id="filter10"
+            />
+            <label class="form-check-label" for="filter10">
+              <i class="fa-solid fa-mountain"></i> Mountain
+            </label>
+          </div>
+          <div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="farms"
+              id="filter11"
+            />
+            <label class="form-check-label" for="filter11">
+              <i class="fa-solid fa-cow"></i> Farms
+            </label>
+          </div>
+          <div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="arctic"
+              id="filter12"
+            />
+            <label class="form-check-label" for="filter12">
+              <i class="fa-solid fa-snowflake"></i> Arctic
+            </label>
+          </div>
+          <div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="amazing_views"
+              id="filter13"
+            />
+            <label class="form-check-label" for="filter13">
+              <i class="fa-solid fa-mountain-sun"></i> Amazing Views
+            </label>
+          </div>
+          <div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="boats"
+              id="filter14"
+            />
+            <label class="form-check-label" for="filter14">
+              <i class="fa-solid fa-sailboat"></i> Boats
+            </label>
+          </div>
+          <div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="park"
+              id="filter15"
+            />
+            <label class="form-check-label" for="filter15">
+              <i class="fa-solid fa-tree"></i> Park
+            </label>
+          </div>
+          <div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="play"
+              id="filter16"
+            />
+            <label class="form-check-label" for="filter16">
+              <i class="fa-solid fa-baseball-bat-ball"></i> Play
+            </label>
+          </div>
+          <div>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              name="listing[filters]"
+              value="bed_n_breakfast"
+              id="filter17"
+            />
+            <label class="form-check-label" for="filter17">
+              <i class="fa-solid fa-mug-hot"></i> Breakfast & Bread
+            </label>
+          </div>
+        </div>
+        <div class="invalid-feedback">Please provide a valid location.</div>
+      </div>
       <div class="row">
         <div class="col-md-4 mb-3">
           <label for="image" class="form-label">Price</label>
@@ -82,9 +414,238 @@
         />
         <div class="invalid-feedback">Please provide a valid location.</div>
       </div>
+      <div
+        class="mb-3 verifyButtons"
+        style="display: flex; align-items: center; justify-content: start"
+      >
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="modalBtn"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal"
+          title="Verify your location on map based on provided Location and Country"
+        >
+          Verify Coordinates
+        </button>
+        <button type="button" id="resetAdd" class="btn btn-secondary">
+          Reset Address
+        </button>
+      </div>
       <br />
+      <div class="mb-3 coordinateDiv" style="display: none">
+        <div style="text-align: center; margin-right: 0.25rem" class="latitude">
+          <p><i>Latitude</i></p>
+          <input
+            type="text"
+            name="listing[latitude]"
+            id="latitude"
+            class="form-control"
+            disabled
+            required
+          />
+        </div>
+        <div style="text-align: center" class="longitude">
+          <p><i>Longitude</i></p>
+          <input
+            type="text"
+            name="listing[longitude]"
+            id="longitude"
+            class="form-control"
+            disabled
+            required
+          />
+        </div>
+      </div>
+      <p class="resetNote" style="font-size: 0.9rem; display: none">
+        To change the Address click "<b>Reset Address</b>" button!
+      </p>
       <button type="submit" class="btn add-btn">Add</button>
       <br /><br /><br />
     </form>
   </div>
 </div>
+<script>
+  let address = document.querySelector("#address");
+  let modalLaunch = document.querySelector("#modalBtn");
+  modalLaunch.disabled = true;
+  modalLaunch.parentElement.setAttribute("id", "disabled");
+  let listingLocation = document.querySelector("#location");
+  let listingCountry = document.querySelector("#country");
+  let modal = document.querySelector(".fade");
+  let latitudeInput = document.querySelector(".latitude input");
+  let longitudeInput = document.querySelector(".longitude input");
+  let coordinateDiv = document.querySelector(".coordinateDiv");
+  let reset = document.querySelector("#resetAdd");
+  reset.disabled = true;
+  let resetNote = document.querySelector(".resetNote");
+  listingLocation.addEventListener("input", function () {
+    if (
+      listingLocation.value.trim().length >= 8 &&
+      listingCountry.value.trim().length >= 4
+    ) {
+      modalLaunch.disabled = false;
+      modalLaunch.parentElement.setAttribute("id", "");
+    } else {
+      modalLaunch.disabled = true;
+      modalLaunch.parentElement.setAttribute("id", "disabled");
+    }
+  });
+  listingCountry.addEventListener("input", function () {
+    if (
+      listingLocation.value.trim().length >= 8 &&
+      listingCountry.value.trim().length >= 4
+    ) {
+      modalLaunch.disabled = false;
+      modalLaunch.parentElement.setAttribute("id", "");
+    } else {
+      modalLaunch.disabled = true;
+      modalLaunch.parentElement.setAttribute("id", "disabled");
+    }
+  });
+
+  let platform = new H.service.Platform({
+    apikey: mapToken,
+  });
+  let defaultLayers = platform.createDefaultLayers();
+  let map = new H.Map(
+    document.getElementById("map"),
+    defaultLayers.vector.normal.map,
+    {
+      center: { lat: 20.5937, lng: 78.9629 },
+      zoom: 4,
+      pixelRatio: window.devicePixelRatio || 1,
+    }
+  );
+  window.addEventListener("resize", () => map.getViewPort().resize());
+  const observer = new MutationObserver((mutationsList) => {
+    mutationsList.forEach((mutation) => {
+      if (mutation.attributeName === "style") {
+        const element = mutation.target;
+        const display = window.getComputedStyle(element).display;
+        if (display !== "none") {
+          map.getViewPort().resize();
+        }
+      }
+    });
+  });
+  observer.observe(modal, { attributes: true, attributeFilter: ["style"] });
+  let behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+  let ui = H.ui.UI.createDefault(map, defaultLayers);
+  let icon = new H.map.Icon(
+    "https://res.cloudinary.com/dmnsftwem/image/upload/v1743022632/pngtree-house-location-pointer-vector-png-image_6648499_a1ygjg.png",
+    { size: { w: 50, h: 50 } }
+  );
+  modalLaunch.addEventListener("click", async function () {
+    listingLocation.disabled = true;
+    listingLocation.setAttribute("id", "disabled");
+    listingCountry.disabled = true;
+    listingCountry.setAttribute("id", "disabled");
+    address.value = `${listingLocation.value.trim()}, ${listingCountry.value.trim()}`;
+    if (!latitudeInput.value || !longitudeInput.value) {
+      let baseURL = "https://geocode.search.hereapi.com/v1/geocode?q=";
+      let ad = encodeURIComponent(address.value);
+      let URL = `${baseURL}${ad}&apiKey=${mapToken}`; // ad short for address
+      await axios.get(URL).then((response) => {
+        latitudeInput.value = `${response.data.items[0].position.lat}`;
+        longitudeInput.value = `${response.data.items[0].position.lng}`;
+        coordinateDiv.style.display = "flex";
+        coordinateDiv.style.justifyContent = "start";
+        coordinateDiv.style.alignItems = "center";
+        let marker = new H.map.Marker(
+          {
+            lat: response.data.items[0].position.lat,
+            lng: response.data.items[0].position.lng,
+          },
+          { icon: icon },
+          { volatility: true }
+        );
+        marker.addEventListener("pointerenter", function () {
+          map.getViewPort().element.style.cursor = "pointer";
+        });
+        marker.addEventListener("pointerleave", function () {
+          map.getViewPort().element.style.cursor = "default";
+        });
+
+        map.setCenter({
+          lat: response.data.items[0].position.lat,
+          lng: response.data.items[0].position.lng,
+        });
+        map.setZoom(20);
+        marker.draggable = true;
+        map.addObject(marker);
+
+        reset.disabled = false;
+        resetNote.style.display = "block";
+
+        map.addEventListener(
+          "dragstart",
+          function (ev) {
+            let target = ev.target,
+              pointer = ev.currentPointer;
+            if (target instanceof H.map.Marker) {
+              let targetPosition = map.geoToScreen(target.getGeometry());
+              target["offset"] = new H.math.Point(
+                pointer.viewportX - targetPosition.x,
+                pointer.viewportY - targetPosition.y
+              );
+              behavior.disable();
+            }
+          },
+          false
+        );
+
+        map.addEventListener(
+          "dragend",
+          function (ev) {
+            let target = ev.target;
+            if (target instanceof H.map.Marker) {
+              latitudeInput.value = `${marker.getGeometry().lat}`;
+              longitudeInput.value = `${marker.getGeometry().lng}`;
+              map.setCenter({
+                lat: marker.getGeometry().lat,
+                lng: marker.getGeometry().lng,
+              });
+              behavior.enable();
+            }
+          },
+          false
+        );
+
+        map.addEventListener(
+          "drag",
+          function (ev) {
+            let target = ev.target,
+              pointer = ev.currentPointer;
+            if (target instanceof H.map.Marker) {
+              target.setGeometry(
+                map.screenToGeo(
+                  pointer.viewportX - target["offset"].x,
+                  pointer.viewportY - target["offset"].y
+                )
+              );
+            }
+          },
+          false
+        );
+        reset.addEventListener("click", function () {
+          map.removeObject(marker);
+          map.setCenter({ lat: 20.5937, lng: 78.9629 });
+          map.setZoom(4);
+          listingLocation.value = "";
+          listingLocation.disabled = false;
+          listingLocation.setAttribute("id", "enable");
+          listingCountry.value = "";
+          listingCountry.disabled = false;
+          listingCountry.setAttribute("id", "enable");
+          reset.disabled = true;
+          modalLaunch.disabled = true;
+          coordinateDiv.style.display = "none";
+          resetNote.style.display = "none";
+          longitudeInput.value = "";
+          latitudeInput.value = "";
+        });
+      });
+    }
+  });
+</script>
