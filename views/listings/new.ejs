@@ -26,6 +26,10 @@
     cursor: not-allowed !important;
   }
 
+  .disabled:hover {
+    cursor: not-allowed !important;
+  }
+
   .form-check {
     display: flex;
     flex-wrap: wrap;
@@ -460,16 +464,19 @@
       <p class="resetNote" style="font-size: 0.9rem; display: none">
         To change the Address click "<b>Reset Address</b>" button!
       </p>
-      <button type="submit" class="btn add-btn">Add</button>
+      <button type="submit" id="listing-submit" class="btn add-btn">Add</button>
       <br /><br /><br />
     </form>
   </div>
 </div>
 <script>
+  let addBtn = document.querySelector("#listing-submit");
+  addBtn.disabled = true;
+  let form = document.querySelector("form");
   let address = document.querySelector("#address");
   let modalLaunch = document.querySelector("#modalBtn");
   modalLaunch.disabled = true;
-  modalLaunch.parentElement.setAttribute("id", "disabled");
+  modalLaunch.classList.add("disabled");
   let listingLocation = document.querySelector("#location");
   let listingCountry = document.querySelector("#country");
   let modal = document.querySelector(".fade");
@@ -478,6 +485,7 @@
   let coordinateDiv = document.querySelector(".coordinateDiv");
   let reset = document.querySelector("#resetAdd");
   reset.disabled = true;
+  reset.classList.add("disabled");
   let resetNote = document.querySelector(".resetNote");
   listingLocation.addEventListener("input", function () {
     if (
@@ -485,10 +493,10 @@
       listingCountry.value.trim().length >= 4
     ) {
       modalLaunch.disabled = false;
-      modalLaunch.parentElement.setAttribute("id", "");
+      modalLaunch.classList.remove("disabled");
     } else {
       modalLaunch.disabled = true;
-      modalLaunch.parentElement.setAttribute("id", "disabled");
+      modalLaunch.classList.add("disabled");
     }
   });
   listingCountry.addEventListener("input", function () {
@@ -497,10 +505,10 @@
       listingCountry.value.trim().length >= 4
     ) {
       modalLaunch.disabled = false;
-      modalLaunch.parentElement.setAttribute("id", "");
+      modalLaunch.classList.remove("disabled");
     } else {
       modalLaunch.disabled = true;
-      modalLaunch.parentElement.setAttribute("id", "disabled");
+      modalLaunch.classList.add("disabled");
     }
   });
 
@@ -537,6 +545,7 @@
     { size: { w: 50, h: 50 } }
   );
   modalLaunch.addEventListener("click", async function () {
+    addBtn.disabled = false;
     listingLocation.disabled = true;
     listingLocation.setAttribute("id", "disabled");
     listingCountry.disabled = true;
@@ -576,6 +585,7 @@
         map.addObject(marker);
 
         reset.disabled = false;
+        reset.classList.remove("disabled");
         resetNote.style.display = "block";
 
         map.addEventListener(
@@ -629,6 +639,7 @@
           false
         );
         reset.addEventListener("click", function () {
+          addBtn.disabled = true;
           map.removeObject(marker);
           map.setCenter({ lat: 20.5937, lng: 78.9629 });
           map.setZoom(4);
@@ -639,7 +650,9 @@
           listingCountry.disabled = false;
           listingCountry.setAttribute("id", "enable");
           reset.disabled = true;
+          reset.classList.add("disabled");
           modalLaunch.disabled = true;
+          modalLaunch.classList.add("disabled");
           coordinateDiv.style.display = "none";
           resetNote.style.display = "none";
           longitudeInput.value = "";
@@ -647,5 +660,13 @@
         });
       });
     }
+  });
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    listingCountry.disabled = false;
+    listingLocation.disabled = false;
+    latitudeInput.disabled = false;
+    longitudeInput.disabled = false;
+    form.submit();
   });
 </script>

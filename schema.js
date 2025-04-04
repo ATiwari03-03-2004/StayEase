@@ -9,6 +9,8 @@ const listingSchema = Joi.object({
     location: Joi.string().required(),
     country: Joi.string().required(),
     filters: Joi.array().required(),
+    longitude: Joi.string().required(),
+    latitude: Joi.string().required(),
   }).required(),
 });
 

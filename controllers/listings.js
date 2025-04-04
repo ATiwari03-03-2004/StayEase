@@ -23,24 +23,21 @@ module.exports.renderNewListingForm = (req, res) => {
 };
 
 module.exports.createListing = async (req, res, next) => {
-  let listing = new Listing(req.body.listing);
+  let listing = req.body.listing;
   listing.filters.push("all_listings");
   listing.owner = req.user._id;
   listing.image = { url: req.file.path, filename: req.file.filename };
-  let baseURL = "https://geocode.search.hereapi.com/v1/geocode?q=";
-  let address = encodeURIComponent(listing.location + listing.country);
-  let key = process.env.HERE_API_KEY;
-  let URL = `${baseURL}${address}&apiKey=${key}`;
-  let response = await axios.get(URL);
   let geometry = {
     type: "Point",
     coordinates: [
-      response.data.items[0].position.lng,
-      response.data.items[0].position.lat,
+      req.body.listing.longitude,
+      req.body.listing.latitude,
     ],
   };
   listing.geometry = geometry;
-  await listing.save();
+  delete listing.latitude;
+  delete listing.longitude;
+  await new Listing(listing).save();
   req.flash("success", "Your listing has been created successfully!");
   res.redirect("/listings");
 };
@@ -75,37 +72,29 @@ module.exports.renderListingEditForm = async (req, res) => {
 
 module.exports.updateListing = async (req, res) => {
   if (!req.body.listing)
-    next(new ExpressError(400, "Bad Request, Send valid data for listing!"));
+    return next(new ExpressError(400, "Bad Request, Send valid data for listing!"));
   let { id } = req.params;
   let listing = await Listing.findById(id);
-
+  let reqListing =  req.body.listing;
   if (listing) {
-    let reqAddress =
-      req.body.listing.location + ", " + req.body.listing.country;
-    let listingAddress = listing.location + ", " + listing.country;
-    if (reqAddress && reqAddress !== listingAddress) {
-      listing.location = req.body.listing.location;
-      listing.country = req.body.listing.country;
-      let baseURL = "https://geocode.search.hereapi.com/v1/geocode?q=";
-      let address = encodeURIComponent(listing.location + listing.country);
-      let key = process.env.HERE_API_KEY;
-      let URL = `${baseURL}${address}&apiKey=${key}`;
-      let response = await axios.get(URL);
+    if (reqListing.latitude !== listing.geometry.coordinates[1] || reqListing.longitude !== listing.geometry.coordinates[0]) {
       let geometry = {
         type: "Point",
         coordinates: [
-          response.data.items[0].position.lng,
-          response.data.items[0].position.lat,
+          reqListing.longitude,
+          reqListing.latitude,
         ],
       };
       listing.geometry = geometry;
     }
+    delete reqListing.latitude;
+    delete reqListing.longitude;
     if (req.file) {
       await cloudinary.uploader.destroy(listing.image.filename);
       listing.image = { url: req.file.path, filename: req.file.filename };
       await Listing.findByIdAndUpdate(id, {
         $set: {
-          ...req.body.listing,
+          ...reqListing,
           image: { ...listing.image },
           geometry: listing.geometry,
         },
@@ -113,13 +102,13 @@ module.exports.updateListing = async (req, res) => {
     } else {
       await Listing.findByIdAndUpdate(id, {
         $set: {
-          ...req.body.listing,
+          ...reqListing,
           geometry: listing.geometry,
         },
       });
     }
     req.flash("success", "Your listing has been updated successfully!");
-  }
+  } else req.flash("error", "The listing you are trying to access does not exist!");
   res.redirect(`/listings/${id}`);
 };
 

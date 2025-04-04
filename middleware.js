@@ -58,6 +58,7 @@ const authorizeReviewOwner = async (req, res, next) => {
 // Validating listing using listingSchema defined in joi
 const validateListing = (req, res, next) => {
   // => Handling listing schema validation using joi
+  console.log(req.body.listing);
   let { error } = listingSchema.validate(req.body);
   if (error) {
     let errMsg = error.details.map((err) => err.message).join(", ");

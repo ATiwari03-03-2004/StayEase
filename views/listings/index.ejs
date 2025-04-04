@@ -29,11 +29,10 @@
   <% } %>
 </div>
 <a
-  href="/listings?_filter="
+  href="/map"
   role="button"
   class="btn btn-dark"
   id="allListingsMap"
-  href="/listings?_filter="
   ><text>Show map <i class="fa-solid fa-map-location-dot"></i></text
 ></a>
 <% } else { %>
@@ -89,8 +88,9 @@
         price.innerText = `${price.innerText.slice(
           0,
           1
-        )} ${price.classList[2].toLocaleString("EN-IN")} / night`;
+        )} ${parseInt(price.classList[2]).toLocaleString("EN-IN")} / night`;
       });
+      
     }
   });
 

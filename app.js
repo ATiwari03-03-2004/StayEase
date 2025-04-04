@@ -78,6 +78,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get("/", (req, res) => {
+  res.redirect("/user/login");
+});
+
 // User login/signup router
 app.use("/user", userRouter);
 

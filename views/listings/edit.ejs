@@ -1,5 +1,35 @@
 <% layout("/layouts/boilerplate") %>
+<script>
+  const mapToken = "<%= process.env.HERE_API_KEY %>";
+</script>
+
 <style>
+  .modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content {
+    width: 100%;
+  }
+
+  #map {
+    width: 100%;
+  }
+
+  #address:hover {
+    cursor: not-allowed;
+  }
+
+  #disabled:hover {
+    cursor: not-allowed !important;
+  }
+
+  .disabled:hover {
+    cursor: not-allowed !important;
+  }
+
   .form-check {
     display: flex;
     flex-wrap: wrap;
@@ -16,6 +46,7 @@
   }
 
   .form-check div label {
+    cursor: pointer;
     border: 1px solid transparent;
     padding: 0.5rem 0.5rem 0.5rem 0.5rem;
     border-radius: 0.8rem;
@@ -31,7 +62,69 @@
     color: rgb(13, 110, 253);
     background-color: rgba(128, 128, 128, 0.1);
   }
+
+  @media (max-width: 382px) {
+    .verifyButtons {
+      flex-direction: column;
+      justify-content: space-evenly !important;
+      align-items: start !important;
+    }
+
+    .verifyButtons button {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .latitude:hover input,
+  .longitude:hover input {
+    cursor: not-allowed;
+  }
 </style>
+
+<div class="modal fade" id="exampleModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="head">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">
+            Is the marker in the right spot?
+          </h1>
+          <p style="font-size: 0.9rem">
+            If not drag
+            <img
+              src="https://res.cloudinary.com/dmnsftwem/image/upload/v1743022632/pngtree-house-location-pointer-vector-png-image_6648499_a1ygjg.png"
+              style="height: 30px; width: 30px"
+              alt="marker"
+            />
+            to the correct place!
+          </p>
+        </div>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="address" class="form-label">Provided Address</label>
+          <input
+            type="text"
+            id="address"
+            class="form-control"
+            placeholder="Enter your full address"
+            disabled
+          />
+          <p style="font-size: 0.75rem">
+            To change address, change Location and Country fields.
+          </p>
+        </div>
+        <div id="map"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="row">
   <div class="col col-sm-8 offset-sm-2">
     <br />
@@ -88,48 +181,6 @@
           class="form-control"
         />
       </div>
-      <div class="row">
-        <div class="col-md-4 mb-3">
-          <label for="price" class="form-label">Price</label>
-          <input
-            type="number"
-            name="listing[price]"
-            id="price"
-            class="form-control"
-            placeholder="Enter price"
-            value="<%= listing.price %>"
-            required
-          />
-          <div class="invalid-feedback">Please provide a valid price.</div>
-        </div>
-        <div class="col-md-8 mb-3">
-          <label for="country" class="form-label">Country</label>
-          <input
-            type="text"
-            name="listing[country]"
-            id="country"
-            class="form-control"
-            value="<%= listing.country %>"
-            placeholder="Enter country"
-            required
-          />
-          <div class="invalid-feedback">Please provide a valid country.</div>
-        </div>
-      </div>
-      <div class="mb-3">
-        <label for="location" class="form-label">Location</label>
-        <input
-          type="text"
-          name="listing[location]"
-          id="location"
-          placeholder="Enter location"
-          class="form-control"
-          value="<%= listing.location %>"
-          required
-        />
-        <div class="invalid-feedback">Please provide a valid location.</div>
-      </div>
-      <br />
       <div class="mb-3">
         <label class="form-label">Filters</label>
         <div class="form-check">
@@ -550,11 +601,326 @@
             <% } %>
           </div>
         </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label for="price" class="form-label">Price</label>
+          <input
+            type="number"
+            name="listing[price]"
+            id="price"
+            class="form-control"
+            placeholder="Enter price"
+            value="<%= listing.price %>"
+            required
+          />
+          <div class="invalid-feedback">Please provide a valid price.</div>
+        </div>
+        <div class="col-md-8 mb-3">
+          <label for="country" class="form-label">Country</label>
+          <input
+            type="text"
+            name="listing[country]"
+            id="country"
+            class="form-control"
+            value="<%= listing.country %>"
+            placeholder="Enter country"
+            required
+          />
+          <div class="invalid-feedback">Please provide a valid country.</div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="location" class="form-label">Location</label>
+        <input
+          type="text"
+          name="listing[location]"
+          id="location"
+          placeholder="Enter location"
+          class="form-control"
+          value="<%= listing.location %>"
+          required
+        />
         <div class="invalid-feedback">Please provide a valid location.</div>
       </div>
       <br />
-      <button type="submit" class="btn edit-btn">Edit</button>
+      <div
+        class="mb-3 verifyButtons"
+        style="display: flex; align-items: center; justify-content: start"
+      >
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="modalBtn"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal"
+          title="Verify your location on map based on provided Location and Country"
+        >
+          Verify Coordinates
+        </button>
+        <button type="button" id="resetAdd" class="btn btn-secondary">
+          Reset Address
+        </button>
+      </div>
+      <br />
+      <div
+        class="mb-3 coordinateDiv"
+        style="display: flex; justify-content: start; align-items: center"
+      >
+        <div style="text-align: center; margin-right: 0.25rem" class="latitude">
+          <p><i>Latitude</i></p>
+          <input
+            type="text"
+            name="listing[latitude]"
+            id="latitude"
+            class="form-control"
+            disabled
+            required
+          />
+        </div>
+        <div style="text-align: center" class="longitude">
+          <p><i>Longitude</i></p>
+          <input
+            type="text"
+            name="listing[longitude]"
+            id="longitude"
+            class="form-control"
+            disabled
+            required
+          />
+        </div>
+      </div>
+      <p class="resetNote" style="font-size: 0.9rem; display: none">
+        To change the Address click "<b>Reset Address</b>" button!
+      </p>
+      <button type="submit" id="listing-submit" class="btn edit-btn">
+        Edit
+      </button>
       <br /><br /><br />
     </form>
   </div>
 </div>
+<script>
+  let addBtn = document.querySelector("#listing-submit");
+  let form = document.querySelector("form");
+  let address = document.querySelector("#address");
+  let modalLaunch = document.querySelector("#modalBtn");
+  modalLaunch.disabled = true;
+  let listingLocation = document.querySelector("#location");
+  listingLocation.disabled = true;
+  let listingCountry = document.querySelector("#country");
+  listingCountry.disabled = true;
+  let modal = document.querySelector(".fade");
+  let latitudeInput = document.querySelector(".latitude input");
+  latitudeInput.value = "<%= listing.geometry.coordinates[1] %>";
+  let longitudeInput = document.querySelector(".longitude input");
+  longitudeInput.value = "<%= listing.geometry.coordinates[0] %>";
+  let coordinateDiv = document.querySelector(".coordinateDiv");
+  let reset = document.querySelector("#resetAdd");
+  let resetNote = document.querySelector(".resetNote");
+  listingLocation.addEventListener("input", function () {
+    if (
+      listingLocation.value.trim().length >= 8 &&
+      listingCountry.value.trim().length >= 4
+    ) {
+      modalLaunch.disabled = false;
+      modalLaunch.classList.remove("disabled");
+      latitudeInput.value = null;
+      longitudeInput.value = null;
+    } else {
+      modalLaunch.disabled = true;
+      modalLaunch.classList.add("disabled");
+    }
+  });
+  listingCountry.addEventListener("input", function () {
+    if (
+      listingLocation.value.trim().length >= 8 &&
+      listingCountry.value.trim().length >= 4
+    ) {
+      modalLaunch.disabled = false;
+      modalLaunch.classList.remove("disabled");
+      latitudeInput.value = null;
+      longitudeInput.value = null;
+    } else {
+      modalLaunch.disabled = true;
+      modalLaunch.classList.add("disabled");
+    }
+  });
+
+  let platform = new H.service.Platform({
+    apikey: mapToken,
+  });
+  let defaultLayers = platform.createDefaultLayers();
+  let map = new H.Map(
+    document.getElementById("map"),
+    defaultLayers.vector.normal.map,
+    {
+      center: { lat: 20.5937, lng: 78.9629 },
+      zoom: 4,
+      pixelRatio: window.devicePixelRatio || 1,
+    }
+  );
+  window.addEventListener("resize", () => map.getViewPort().resize());
+  const observer = new MutationObserver((mutationsList) => {
+    mutationsList.forEach((mutation) => {
+      if (mutation.attributeName === "style") {
+        const element = mutation.target;
+        const display = window.getComputedStyle(element).display;
+        if (display !== "none") {
+          map.getViewPort().resize();
+        }
+      }
+    });
+  });
+  observer.observe(modal, { attributes: true, attributeFilter: ["style"] });
+  let behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+  let ui = H.ui.UI.createDefault(map, defaultLayers);
+  let icon = new H.map.Icon(
+    "https://res.cloudinary.com/dmnsftwem/image/upload/v1743022632/pngtree-house-location-pointer-vector-png-image_6648499_a1ygjg.png",
+    { size: { w: 50, h: 50 } }
+  );
+  modalLaunch.addEventListener("click", async function () {
+    addBtn.disabled = false;
+    listingLocation.disabled = true;
+    listingLocation.setAttribute("id", "disabled");
+    listingCountry.disabled = true;
+    listingCountry.setAttribute("id", "disabled");
+    address.value = `${listingLocation.value.trim()}, ${listingCountry.value.trim()}`;
+    if (!latitudeInput.value || !longitudeInput.value) {
+      console.log("hmm");
+      let baseURL = "https://geocode.search.hereapi.com/v1/geocode?q=";
+      let ad = encodeURIComponent(address.value);
+      let URL = `${baseURL}${ad}&apiKey=${mapToken}`; // ad short for address
+      await axios.get(URL).then((response) => {
+        latitudeInput.value = `${response.data.items[0].position.lat}`;
+        longitudeInput.value = `${response.data.items[0].position.lng}`;
+        coordinateDiv.style.display = "flex";
+        coordinateDiv.style.justifyContent = "start";
+        coordinateDiv.style.alignItems = "center";
+        let marker = new H.map.Marker(
+          {
+            lat: response.data.items[0].position.lat,
+            lng: response.data.items[0].position.lng,
+          },
+          { icon: icon },
+          { volatility: true }
+        );
+        marker.addEventListener("pointerenter", function () {
+          map.getViewPort().element.style.cursor = "pointer";
+        });
+        marker.addEventListener("pointerleave", function () {
+          map.getViewPort().element.style.cursor = "default";
+        });
+
+        map.setCenter({
+          lat: response.data.items[0].position.lat,
+          lng: response.data.items[0].position.lng,
+        });
+        map.setZoom(20);
+        marker.draggable = true;
+        map.addObject(marker);
+
+        reset.disabled = false;
+        reset.classList.remove("disabled");
+        resetNote.style.display = "block";
+
+        map.addEventListener(
+          "dragstart",
+          function (ev) {
+            let target = ev.target,
+              pointer = ev.currentPointer;
+            if (target instanceof H.map.Marker) {
+              let targetPosition = map.geoToScreen(target.getGeometry());
+              target["offset"] = new H.math.Point(
+                pointer.viewportX - targetPosition.x,
+                pointer.viewportY - targetPosition.y
+              );
+              behavior.disable();
+            }
+          },
+          false
+        );
+
+        map.addEventListener(
+          "dragend",
+          function (ev) {
+            let target = ev.target;
+            if (target instanceof H.map.Marker) {
+              latitudeInput.value = `${marker.getGeometry().lat}`;
+              longitudeInput.value = `${marker.getGeometry().lng}`;
+              map.setCenter({
+                lat: marker.getGeometry().lat,
+                lng: marker.getGeometry().lng,
+              });
+              behavior.enable();
+            }
+          },
+          false
+        );
+
+        map.addEventListener(
+          "drag",
+          function (ev) {
+            let target = ev.target,
+              pointer = ev.currentPointer;
+            if (target instanceof H.map.Marker) {
+              target.setGeometry(
+                map.screenToGeo(
+                  pointer.viewportX - target["offset"].x,
+                  pointer.viewportY - target["offset"].y
+                )
+              );
+            }
+          },
+          false
+        );
+        reset.addEventListener("click", function () {
+          addBtn.disabled = true;
+          map.removeObject(marker);
+          map.setCenter({ lat: 20.5937, lng: 78.9629 });
+          map.setZoom(4);
+          listingLocation.value = "";
+          listingLocation.disabled = false;
+          listingLocation.setAttribute("id", "enable");
+          listingCountry.value = "";
+          listingCountry.disabled = false;
+          listingCountry.setAttribute("id", "enable");
+          reset.disabled = true;
+          reset.classList.add("disabled");
+          modalLaunch.disabled = true;
+          modalLaunch.classList.add("disabled");
+          coordinateDiv.style.display = "none";
+          resetNote.style.display = "none";
+          longitudeInput.value = "";
+          latitudeInput.value = "";
+        });
+      });
+    }
+  });
+  reset.addEventListener("click", function () {
+    addBtn.disabled = true;
+    listingLocation.value = "";
+    listingLocation.disabled = false;
+    listingLocation.setAttribute("id", "enable");
+    listingCountry.value = "";
+    listingCountry.disabled = false;
+    listingCountry.setAttribute("id", "enable");
+    reset.disabled = true;
+    reset.classList.add("disabled");
+    modalLaunch.disabled = true;
+    modalLaunch.classList.add("disabled");
+    coordinateDiv.style.display = "none";
+    resetNote.style.display = "none";
+    longitudeInput.value = "";
+    latitudeInput.value = "";
+  });
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    listingCountry.disabled = false;
+    listingLocation.disabled = false;
+    latitudeInput.disabled = false;
+    longitudeInput.disabled = false;
+    form.submit();
+  });
+</script>
