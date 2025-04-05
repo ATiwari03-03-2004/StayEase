@@ -21,8 +21,15 @@ router.get("/", wrapAsync(listingControllers.index)); // Index Route
 
 router
   .route("/new")
-  .get(userAuth, listingControllers.renderNewListingForm) // New Route 
-  .post(userAuth, parser.single("listing[image]"), validateListing, wrapAsync(listingControllers.createListing)); // Create Route
+  .get(userAuth, listingControllers.renderNewListingForm) // New Route
+  .post(
+    userAuth,
+    parser.single("listing[image]"),
+    validateListing,
+    wrapAsync(listingControllers.createListing)
+  ); // Create Route
+
+router.post("/search", userAuth, wrapAsync(listingControllers.search)); // Search Route
 
 router.get("/:id", wrapAsync(listingControllers.showListing)); // Show Route
 

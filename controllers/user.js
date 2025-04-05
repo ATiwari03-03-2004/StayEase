@@ -52,7 +52,7 @@ module.exports.login = (req, res, next) => {
   // but it will work if we create a middleware "setRedirectLocals" which basically is called just before authentication when the session still has the redirectURL then it sets res.locals.redirectURL
   // to req.session.redirectURL, due to which res.locals.redirectURL becomes valid and thus then it can be used.
 
-  if (res.locals.redirectURL) {
+  if (res.locals.redirectURL && res.locals.redirectURL !== "/listings/search") {
     const idx = res.locals.redirectURL.indexOf("/review");
     if (idx === -1) res.redirect(res.locals.redirectURL);
     else res.redirect(res.locals.redirectURL.slice(0, idx));

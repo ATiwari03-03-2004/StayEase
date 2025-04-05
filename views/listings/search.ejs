@@ -1,0 +1,212 @@
+<% layout("/layouts/boilerplate") %> <%- include("../includes/filter.ejs") %>
+<style>
+  .showAllMap {
+    height: 88vh !important;
+    width: 100% !important;
+  }
+
+  #mapLink {
+    text-decoration: none;
+    color: black;
+  }
+
+  #markerPopupImg {
+    height: 200px;
+    width: 100%;
+    border-top-left-radius: 0.8rem;
+    border-top-right-radius: 0.8rem;
+  }
+
+  #allListingsMap {
+    position: fixed;
+    top: 90%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 1rem;
+    height: 2.5rem;
+    width: 8.5rem;
+    z-index: 1;
+  }
+
+  #allListingsMap:hover {
+    box-shadow: 2px 2px 10px black;
+  }
+
+  .H_ib_body {
+    border-radius: 0.8rem;
+    box-shadow: 2px 2px 10px black;
+  }
+
+  .H_ib_close {
+    padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+    background-color: white;
+    border-radius: 100%;
+  }
+
+  .H_ib_close:hover {
+    box-shadow: 2px 2px 10px black;
+  }
+
+  .H_ib_content {
+    margin: 0 !important;
+  }
+</style>
+<div
+  class="row row-cols-1 row-cols-sm-1 row-cols-md-3 row-cols-lg-4 listing-container"
+  id="listing"
+>
+  <% for(listing of allListings) { %>
+  <a
+    href="/listings/<%= listing._id %>"
+    class="<%= listing.geometry.coordinates[1] %>_<%= listing.geometry.coordinates[0] %>"
+    style="text-decoration: none"
+  >
+    <div class="card listing-card col">
+      <img
+        src="<%= listing.image.url %>"
+        class="card-img-top"
+        alt="<%= listing.title %>"
+        style="height: 20rem"
+      />
+      <div class="card-img-overlay"></div>
+      <div class="card-body">
+        <p class="card-text">
+          <b><%= listing.title %></b>
+        </p>
+        <p class="card-text priceListing <%= listing.price %>">
+          &#8377; <%= listing.price.toLocaleString("EN-IN") %> / night
+        </p>
+      </div>
+    </div>
+  </a>
+  <% } %>
+</div>
+<div id="map" class="mb-3" style="height: 20rem"></div>
+<script>
+  let platform = new H.service.Platform({
+    apikey: "<%= process.env.HERE_API_KEY %>",
+  });
+  let lat = "<%= lati %>",
+    lng = "<%= longi %>";
+  let latitude = parseFloat(lat),
+    longitude = parseFloat(lng);
+  let defaultLayers = platform.createDefaultLayers();
+  let map = new H.Map(
+    document.getElementById("map"),
+    defaultLayers.vector.normal.map,
+    {
+      center: { lat: latitude, lng: longitude },
+      zoom: 10,
+      pixelRatio: window.devicePixelRatio || 1,
+    }
+  );
+  window.addEventListener("resize", () => map.getViewPort().resize());
+  let behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+  let ui = H.ui.UI.createDefault(map, defaultLayers);
+  function addCircleToMap(map) {
+    map.addObject(
+      new H.map.Circle({ lat: latitude, lng: longitude }, 20000, {
+        style: {
+          fillColor: "rgba(255, 0, 0, 0.5)",
+          strokeColor: "rgba(0, 0, 255, 0.2)",
+          lineWidth: 3,
+        },
+      })
+    );
+  }
+  addCircleToMap(map);
+  let icon = new H.map.Icon(
+    "https://res.cloudinary.com/dmnsftwem/image/upload/v1743022632/pngtree-house-location-pointer-vector-png-image_6648499_a1ygjg.png",
+    { size: { w: 50, h: 50 } }
+  );
+  let marker = new H.map.Marker({ lat: latitude, lng: longitude });
+  marker.addEventListener("pointerenter", function () {
+    map.getViewPort().element.style.cursor = "pointer";
+  });
+  marker.addEventListener("pointerleave", function () {
+    map.getViewPort().element.style.cursor = "default";
+  });
+  marker.addEventListener("tap", function (e) {
+    ui.getBubbles().forEach(function (bubble) {
+      ui.removeBubble(bubble);
+    });
+    ui.addBubble(
+      new H.ui.InfoBubble(e.target.getGeometry(), {
+        content: `<div style="white-space: nowrap; padding: 1rem 3rem 1rem 1rem;"><b>Your searched Location!</b></div>`,
+      })
+    );
+  });
+  map.addObject(marker);
+  let listings = document.querySelectorAll("#listing a");
+  listings.forEach((listing) => {
+    let idx = listing.classList[0].indexOf("_");
+    let listingLatitude = parseFloat(listing.classList[0].slice(0, idx));
+    let listingLongitude = parseFloat(listing.classList[0].slice(idx + 1));
+    let newMarker = new H.map.Marker(
+      { lat: listingLatitude, lng: listingLongitude },
+      { icon: icon }
+    );
+    newMarker.addEventListener("pointerenter", function () {
+      map.getViewPort().element.style.cursor = "pointer";
+    });
+    newMarker.addEventListener("pointerleave", function () {
+      map.getViewPort().element.style.cursor = "default";
+    });
+    newMarker.addEventListener("tap", function (e) {
+      ui.getBubbles().forEach(function (bubble) {
+        ui.removeBubble(bubble);
+      });
+      console.log(listing)
+      let url = listing.href;
+      let title = listing.children[0].children[2].children[0].children[0].innerText;
+      let imageUrl = listing.children[0].children[0].src;
+      let price = listing.children[0].children[2].children[1].innerText;
+      ui.addBubble(
+        new H.ui.InfoBubble(e.target.getGeometry(), {
+          content: `<a id="mapLink" href=${url}><div style="white-space: nowrap;"><div class="markerImg" style="width: 100%;"><img src=${imageUrl} id="markerPopupImg" alt=${title}></div><div class="markerInfo" style="margin: 0.5rem;"><h4 style="margin-bottom: 0.2rem;">${title}</h4><p style="font-size: 1.2rem; margin-bottom: 0.2rem;">${price} / night</p></div></div></a>`,
+        })
+      );
+    });
+    map.addObject(newMarker);
+  });
+
+  let taxToggleCheckbox = document.querySelector("#flexSwitchCheckDefault");
+  let prices = document.querySelectorAll(".priceListing");
+  taxToggleCheckbox.addEventListener("change", function () {
+    if (taxToggleCheckbox.checked) {
+      prices.forEach((price) => {
+        let costWithGST =
+          parseInt(price.classList[2]) + parseInt(price.classList[2]) * 0.18;
+        price.innerText = `${price.innerText.slice(
+          0,
+          1
+        )} ${costWithGST.toLocaleString("EN-IN")} / night with GST (18%)`;
+      });
+    } else {
+      prices.forEach((price) => {
+        price.innerText = `${price.innerText.slice(0, 1)} ${parseInt(
+          price.classList[2]
+        ).toLocaleString("EN-IN")} / night`;
+      });
+    }
+  });
+
+  let filterDiv = document.querySelector(".filter-features");
+  filterDiv.style.display = "flex";
+  filterDiv.style.justifyContent = "space-between";
+
+  let filterContainer = document.querySelector("#filters");
+  filterContainer.innerHTML =
+    "<p>Results within <b>20kms</b> range: <b><i><%= allListings.length %> found</i></b></p>";
+
+  let filters = document.querySelectorAll(".filter");
+  filters.forEach((filter) => (filter.style.display = "none"));
+
+  let flashCloseBtn = document.querySelector(".alert .btn-close");
+  let listingContainer = document.querySelector(".listing-container");
+  if (flashCloseBtn) {
+    flashCloseBtn.addEventListener("click", function () {
+      listingContainer.setAttribute("id", "listing");
+    });
+  }
+</script>

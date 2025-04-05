@@ -72,6 +72,7 @@ passport.deserializeUser(User.deserializeUser());
 
 // Middleware, setting local variables for views
 app.use((req, res, next) => {
+  res.locals.route = req.path;
   res.locals.successMsg = req.flash("success");
   res.locals.failureMsg = req.flash("error");
   res.locals.currentUser = req.user;
