@@ -51,7 +51,7 @@ app.set("views", path.join(__dirname, "views"));
 // Express-session middleware by use of connect-mongo
 const mongoStore = MongoStore.create({
   mongoUrl: process.env.ATLAS_DB_URL,
-  crypto: { secret: "supersecretcode" },
+  crypto: { secret: process.env.SECRET },
   touchAfter: 24 * 3600,
 });
 
@@ -60,7 +60,7 @@ mongoStore.on("error", () => {
 });
 
 const sessionOption = {
-  secret: "supersecretcode",
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: true,
   store: mongoStore,
