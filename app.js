@@ -11,6 +11,7 @@ const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 const mapRouter = require("./routes/map.js");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
@@ -18,13 +19,13 @@ const passport = require("passport");
 
 // Connecting to database
 main()
-  .then((res) => console.log("Connected to DB!"))
-  .catch((err) =>
-    next(new ExpressError(500, "Failed to connect with database!"))
-  );
+  .then((res) => {
+    console.log("Connected to StayEase DB!");
+  })
+  .catch((err) => console.log("Error: ", err));
 
 async function main() {
-  await mongoose.connect("mongodb://127.0.0.1:27017/stayease");
+  await mongoose.connect(process.env.ATLAS_DB_URL);
 }
 
 // Parsing incoming request body
@@ -47,14 +48,25 @@ app.engine("ejs", engine);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Express-session middleware
+// Express-session middleware by use of connect-mongo
+const mongoStore = MongoStore.create({
+  mongoUrl: process.env.ATLAS_DB_URL,
+  crypto: { secret: "supersecretcode" },
+  touchAfter: 24 * 3600,
+});
+
+mongoStore.on("error", () => {
+  console.log("Error in MONGO SESSION STORE: ", err);
+});
+
 const sessionOption = {
   secret: "supersecretcode",
   resave: false,
   saveUninitialized: true,
+  store: mongoStore,
   cookie: {
-    expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 1 week expiry
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    expires: Date.now() + 2 * 7 * 24 * 60 * 60 * 1000, // 2 week expiry
+    maxAge: 2 * 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
   },
 };
@@ -82,6 +94,13 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
   res.redirect("/user/login");
 });
+
+// Checking contents of session
+// app.get("/debug-session", (req, res) => {
+//   console.log("Session data:", req.session);
+//   console.log("Passport user:", req.session.passport?.user);
+//   res.send(req.session);
+// });
 
 // User login/signup router
 app.use("/user", userRouter);

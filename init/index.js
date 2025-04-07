@@ -8,7 +8,7 @@ main()
   .catch((err) => console.log(err));
 
 async function main(params) {
-  await mongoose.connect("mongodb://127.0.0.1:27017/stayease");
+  await mongoose.connect("mongodb+srv://mailanshumantiwari:cuzrk8DiekIv8oee@cluster0.2lbhcdv.mongodb.net/stayease");
 }
 
 const initDB = async () => {
@@ -29,7 +29,7 @@ const initDB = async () => {
     };
     modifiedData.push({
       ...listing,
-      owner: "67d081821c07cc7981639ccd",
+      owner: "67f22ca9b87d9339fc86091b",
       geometry,
     });
     await new Promise((resolve) => setTimeout(resolve, 1000));
