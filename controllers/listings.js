@@ -41,14 +41,12 @@ module.exports.createListing = async (req, res, next) => {
 
 module.exports.showListing = async (req, res) => {
   let { id } = req.params;
-  let listing = await Listing.findById(id)
-    .populate({
-      path: "reviews",
-      populate: {
-        path: "owner",
-      },
-    })
-    .populate("owner");
+  let listing = await Listing.findById(id).populate({
+    path: "reviews",
+    populate: {
+      path: "owner",
+    },
+  });
 
   if (listing === null) {
     req.flash("error", "The listing you are trying to access does not exist!");
@@ -143,7 +141,11 @@ module.exports.search = async (req, res, next) => {
     },
   });
   if (listing.length > 0) {
-    res.render("listings/search.ejs", { allListings: listing, lati: response.data.items[0].position.lat, longi: response.data.items[0].position.lng });
+    res.render("listings/search.ejs", {
+      allListings: listing,
+      lati: response.data.items[0].position.lat,
+      longi: response.data.items[0].position.lng,
+    });
   } else {
     req.flash(
       "error",
