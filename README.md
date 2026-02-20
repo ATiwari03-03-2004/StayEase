@@ -1,3 +1,3 @@
 # StayEase
 
-A fullstack Airbnd clone
+A fullstack Airbnd clone.
